@@ -12,7 +12,7 @@ class UserController extends Controller
         $user = $request->current_user;
 
         if ($user->role = 'admin'){
-            return CustomReponse::success("Bienvenido Admin",['user' => $user]);
+            return CustomReponse::success("Bienvenido Administrador",['user' => $user]);
         }
 
         return CustomReponse::success("Bienvenido",['user' => $user]);
