@@ -13,4 +13,5 @@ Route::group([
 
 Route::group(['middleware' => ['jwt']], function () {
     Route::get('welcome', 'UserController@welcome')->name('users.welcome');
+    Route::post('users/admin', 'UserController@createAdmin')->name('users.create.admin');
 });
