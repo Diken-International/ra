@@ -126,14 +126,15 @@ class UserController extends Controller
         );
     }
 
-    public function detail(){
+    public function index(){
 
+        
         $user = User::all();
 
         
         return CustomReponse::success("Usuarios encontrados correctamente", [ 'users' => $user] );
-       
-        //dd($user);
+        
+        
     }
 
     public function show(Request $request){

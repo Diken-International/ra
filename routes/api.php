@@ -21,7 +21,7 @@ Route::group(['middleware' => ['jwt']], function () {
 
     Route::get('users/me','UserController@me')->name('users.me');
 
-    Route::get('users','UserController@detail')->name('users.details');
+    Route::get('users','UserController@index')->name('users.index');
 
     Route::post('users/show','UserController@show')->name('users.show');
 
