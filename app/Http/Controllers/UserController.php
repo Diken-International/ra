@@ -3,25 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\CustomReponse;
+use App\Helpers\RoleHelper;
 use App\Models\BranchOffice;
 use App\Models\User;
-use function foo\func;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
-    public function welcome(Request $request){
-
-        $user = $request->current_user;
-
-        if ($user->role = 'admin'){
-            return CustomReponse::success("Bienvenido Administrador",['user' => $user]);
-        }
-
-        return CustomReponse::success("Bienvenido",['user' => $user]);
-    }
 
     public function createAdmin(Request $request){
 
@@ -29,8 +20,7 @@ class UserController extends Controller
             'name' => 'required',
             'last_name' => 'required',
             'email' => 'required|email',
-            'password' => 'required|string',
-            'branch_office_name' => 'required'
+            'password' => 'required|string'
         ]);
 
         if ($validator->fails()) {
@@ -56,45 +46,35 @@ class UserController extends Controller
             });
 
             return CustomReponse::success('Administrador creado correctamente', $result);
+
         }catch (\Exception $exception){
-            return CustomReponse::error('No ha sido posible crear el administrador');
+
+            return CustomReponse::error('No ha sido posible crear el usuario');
+
         }
 
 
     }
 
-    public function createRole(Request $request){
+    public function store(Request $request){
 
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'last_name' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users',
             'password' => 'required|string',
-            'role'    => 'required',
-            'branch_office_name' => 'required'
+            'role'    => ['required', Rule::in(RoleHelper::$available_roles)]
         ]);
 
         if ($validator->fails()) {
             return CustomReponse::error('Error al validar', $validator->errors());
         }
-
         
         try{
 
             $create = DB::transaction(function() use($request){
                 
-
-                
-                $user = auth()->user()->role;
-
-                
-                if($user == 'Super_Admin' || $user == 'admin'){
-
-                    $branch_office = BranchOffice::create(['name' => $request->get('branch_office_name')]);
-
-                    $idbranch_office = $branch_office->id;
-
-                    //role = $request->get('role');
+                if($request->current_user->role == 'admin'){
 
                     $user = User::create([
                             'name' => $request->get('name'),
@@ -102,10 +82,10 @@ class UserController extends Controller
                             'email' => $request->get('email'),
                             'password' => bcrypt($request->get('password')),
                             'role' => $request->get('role'),
-                            'branch_office_id' => $idbranch_office
+                            'branch_office_id' => $request->current_user->branch_office_id
                     ]);
 
-                    return compact('user','branch_office');
+                    return compact('user');
                 }
 
 
@@ -126,29 +106,38 @@ class UserController extends Controller
         );
     }
 
-    public function index(){
+    public function index(Request $request)
+    {
 
-        
-        $user = User::all();
+        $users = User::where('branch_office_id', $request->current_user->branch_office_id);
 
-        
-        return CustomReponse::success("Usuarios encontrados correctamente", [ 'users' => $user] );
-        
+        if (!empty($request->get('role'))){
+            $users->where('role', $request->get('role'));
+        }
+
+        if (!empty($request->get('search'))){
+            $users->where('name', 'iLIKE', '%'.$request->get('search').'%');
+        }
+
+        $users = $users->get();
+
+        return CustomReponse::success("Usuarios encontrados correctamente", [ 'users' => $users] );
         
     }
 
-    public function show(Request $request){
-        //dd($request->all() );
+    public function show(Request $request, $user_id){
 
-        $role = $request->get('role');
 
-        if($role == 'admin'){
+        $user = User::where([
+            'id' => $user_id,
+            'branch_office_id' => $request->current_user->branch_office_id
+        ])->first();
 
-            $user = User::where('role','=',$role)->get();
-
-            return CustomReponse::success("Administrador encontrado correctamente", $user);
-
+        if ($user instanceof User){
+            return CustomReponse::success("Usuario obtenido correctamente", ['user' => $user]);
         }
+
+        return CustomReponse::error("El usuario no ha sido obtenido correctamente");
         
 
     }
@@ -179,7 +168,7 @@ class UserController extends Controller
         
     }
 
-    public function destroy($id){
+    public function destroy(Request $request, $id){
 
         try{
             
