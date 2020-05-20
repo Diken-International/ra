@@ -13,13 +13,13 @@ class CreateServiceTable extends Migration
      */
     public function up()
     {
-        Schema::create('service', function (Blueprint $table) {
+        Schema::create('services', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->string('type ');
-            $table->json('costs');
-            $table->float('extra_cost', 10, 2);
-            $table->float('total_cost', 10, 2);
+            $table->string('name')->nullable();
+            $table->string('type');
+            $table->json('costs')->nullable();
+            $table->float('extra_cost', 10, 2)->nullable();
+            $table->float('total_cost', 10, 2)->nullable();
             $table->integer('client_id');
             $table->integer('technical_id');
             $table->timestamps();
