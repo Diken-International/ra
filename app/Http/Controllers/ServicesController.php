@@ -92,18 +92,37 @@ class ServicesController extends Controller
     }
 
     public function update(Request $request, $id){
+
+        $service = Services::where([
+            'id' => $id,
+            'branch_office_id' => $request->current_user->branch_office_id
+        ])->first();
+
+        if (!$service instanceof Services){
+            return CustomReponse::error("Servicio no encontrado");
+        }
         
         try{
 
-            $service = DB::transaction(function() use($request, $id){
+            $service = DB::transaction(function() use($request, $service){
 
-                $service = Services::findOrFail($id);
-                
-                $service->update( $request->all() );
-                
-                return compact('service');
-                
-                
+                // $request->cost = json_encode($request->get('costs'));
+                $service->update([
+                    'name' => $request->get('name', $service->name),
+                    'type' => $request->get('type', $service->type),
+                    'extra_cost' => $request->get('extra_cost', $service->extra_cost),
+                    'total_cost' => $request->get('total_cost', $service->total_cost),
+                    'client_id' => $request->get('client_id', $service->client_id),
+                    'technical_id' => $request->get('technical_id', $service->technical_id),
+                ]);
+
+                if ($request->exists('costs')){
+                    $service->costs = json_encode($request->get('costs'));
+                    $service->save();
+                }
+
+                $service->costs = json_decode($service->costs);
+                return $service;
             });
 
             return CustomReponse::success('Servicio modificado correctamente', $service);
