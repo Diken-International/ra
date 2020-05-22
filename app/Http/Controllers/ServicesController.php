@@ -12,16 +12,17 @@ use App\Models\Services;
 
 class ServicesController extends Controller
 {
-    //
 
     public function index(Request $request){
 
-        $service = Services::all();
-        //dd($service);
-        
-        return compact('service');
+        $service = Services::where(
+            'branch_office_id', $request->current_user->branch_office_id
+        )->get()->map(function ($service){
+            $service->costs = json_decode($service->costs);
+            return $service;
+        });
 
-        return CustomReponse::success('Servicio encontrado', [ 'service' => $service ]);
+        return CustomReponse::success('Servicio encontrado', [ 'services' => $service ]);
         
     }
 
@@ -30,8 +31,8 @@ class ServicesController extends Controller
     	$validator = Validator::make($request->all(), [
             'name' => 'required',
             'type' => 'required',
-            'cost' => 'required',
-            'extra_cost' => 'required',
+            'costs' => '',
+            'extra_cost' => '',
             'total_cost' => 'required',
             'client_id'  => 'required',
             'technical_id' => 'required'
@@ -46,8 +47,19 @@ class ServicesController extends Controller
         try{
             $result = DB::transaction(function () use($request){
 
-            	$service = Services::create($request->all());
-            	return compact('service');
+            	$service = Services::create([
+            	    'name' => $request->get('name'),
+                    'type' => $request->get('type'),
+                    'costs' => json_encode($request->get('costs')),
+                    'extra_cost' => $request->get('extra_cost'),
+                    'total_cost' => $request->get('total_cost'),
+                    'client_id' => $request->get('client_id'),
+                    'technical_id' => $request->get('technical_id'),
+                    'branch_office_id' => $request->current_user->branch_office_id
+                 ]);
+
+            	$service->costs = json_decode($service->costs);
+            	return $service;
 
             });
 
@@ -62,9 +74,18 @@ class ServicesController extends Controller
 
     }
 
-    public function show($id){
+    public function show(Request $request, $id){
 
-        $service = Services::findOrFail($id);
+        $service = Services::where([
+            'id' => $id,
+            'branch_office_id' => $request->current_user->branch_office_id
+        ])->first();
+
+        if (!$service instanceof Services){
+            return CustomReponse::error("Servicio no encontrado");
+        }
+
+        $service->costs = json_decode($service->costs);
 
         return CustomReponse::success("Servicio encontrados correctamente", [ 'service' => $service] );
 

@@ -14,10 +14,11 @@ class Services extends Model
     protected $fillable = [
         'name',
         'type',
-        'cost',
+        'costs',
         'extra_cost',
         'total_cost',
         'client_id',
-        'technical_id'
+        'technical_id',
+        'branch_office_id'
     ];
 }
