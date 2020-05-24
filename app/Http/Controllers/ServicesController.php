@@ -86,7 +86,7 @@ class ServicesController extends Controller
 
         $service->costs = json_decode($service->costs);
 
-        $service->files = File::where(['model' => get_class($service), 'model_id' => $service->id])->get();
+        $service->files = File::where(['model' => str_replace('\\', '/', get_class($service)), 'model_id' => $service->id])->get();
 
         return CustomReponse::success("Servicio encontrados correctamente", [ 'service' => $service] );
 
