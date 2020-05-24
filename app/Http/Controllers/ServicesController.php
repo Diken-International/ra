@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Rules\ValidRole;
+use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -69,7 +70,6 @@ class ServicesController extends Controller
             return CustomReponse::error('El servicio no ha podido ser creado', $exception->getMessage());
 
         }
-        
 
     }
 
@@ -85,6 +85,8 @@ class ServicesController extends Controller
         }
 
         $service->costs = json_decode($service->costs);
+
+        $service->files = File::where(['model' => get_class($service), 'model_id' => $service->id])->get();
 
         return CustomReponse::success("Servicio encontrados correctamente", [ 'service' => $service] );
 

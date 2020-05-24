@@ -11,6 +11,10 @@ class Services extends Model
 
     protected $table = 'services';
 
+    protected $appends = [
+        'model'
+    ];
+
     protected $fillable = [
         'name',
         'type',
@@ -27,7 +31,6 @@ class Services extends Model
         'contact_phone'
     ];
 
-
     public function getCostsAttribute($value){
         return json_decode($value);
     }
@@ -40,7 +43,12 @@ class Services extends Model
         return $this->hasOne(Client::class,'id','client_id');
     }
 
-    public function technical(){
+    public function technical()
+    {
         return $this->hasOne(User::class, 'id', 'technical_id');
+    }
+
+    public function getModelAttribute(){
+        return str_replace('\\', '/', get_class($this));
     }
 }
