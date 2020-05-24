@@ -3,11 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Services extends Model
 {
-    //
-    protected $table = 'service';
+    use SoftDeletes;
 
-    protected $guarded = [];
+    protected $table = 'services';
+
+    protected $fillable = [
+        'name',
+        'type',
+        'costs',
+        'extra_cost',
+        'total_cost',
+        'client_id',
+        'technical_id',
+        'branch_office_id'
+    ];
 }

@@ -12,14 +12,27 @@ use App\Models\Services;
 
 class ServicesController extends Controller
 {
-    //
-    public function createService(Request $request){
+
+    public function index(Request $request){
+
+        $service = Services::where(
+            'branch_office_id', $request->current_user->branch_office_id
+        )->get()->map(function ($service){
+            $service->costs = json_decode($service->costs);
+            return $service;
+        });
+
+        return CustomReponse::success('Servicio encontrado', [ 'services' => $service ]);
+        
+    }
+
+    public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
             'name' => 'required',
             'type' => 'required',
-            'cost' => 'required',
-            'extra_cost' => 'required',
+            'costs' => '',
+            'extra_cost' => '',
             'total_cost' => 'required',
             'client_id'  => 'required',
             'technical_id' => 'required'
@@ -34,28 +47,114 @@ class ServicesController extends Controller
         try{
             $result = DB::transaction(function () use($request){
 
-            	/*
-                $branch_office = BranchOffice::create(['name' => $request->get('branch_office_name')]);
-                $user = User::create([
-                    'name' => $request->get('name'),
-                    'last_name' => $request->get('last_name'),
-                    'email' => $request->get('email'),
-                    'password' => bcrypt($request->get('password')),
-                    'role' => 'admin',
-                    'branch_office_id' => $branch_office->id
-                ]);
+            	$service = Services::create([
+            	    'name' => $request->get('name'),
+                    'type' => $request->get('type'),
+                    'costs' => json_encode($request->get('costs')),
+                    'extra_cost' => $request->get('extra_cost'),
+                    'total_cost' => $request->get('total_cost'),
+                    'client_id' => $request->get('client_id'),
+                    'technical_id' => $request->get('technical_id'),
+                    'branch_office_id' => $request->current_user->branch_office_id
+                 ]);
 
-                return compact('user','branch_office');
-                */
-                dd( $request->all() );
+            	$service->costs = json_decode($service->costs);
+            	return $service;
 
             });
 
-            return CustomReponse::success('Administrador creado correctamente', $result);
+            return CustomReponse::success('Servicio creado correctamente', $result);
+
         }catch (\Exception $exception){
-            return CustomReponse::error('No ha sido posible crear el administrador');
+
+            return CustomReponse::error('El servicio no ha podido ser creado', $exception->getMessage());
+
         }
         
+
+    }
+
+    public function show(Request $request, $id){
+
+        $service = Services::where([
+            'id' => $id,
+            'branch_office_id' => $request->current_user->branch_office_id
+        ])->first();
+
+        if (!$service instanceof Services){
+            return CustomReponse::error("Servicio no encontrado");
+        }
+
+        $service->costs = json_decode($service->costs);
+
+        return CustomReponse::success("Servicio encontrados correctamente", [ 'service' => $service] );
+
+    }
+
+    public function update(Request $request, $id){
+
+        $service = Services::where([
+            'id' => $id,
+            'branch_office_id' => $request->current_user->branch_office_id
+        ])->first();
+
+        if (!$service instanceof Services){
+            return CustomReponse::error("Servicio no encontrado");
+        }
+        
+        try{
+
+            $service = DB::transaction(function() use($request, $service){
+
+                // $request->cost = json_encode($request->get('costs'));
+                $service->update([
+                    'name' => $request->get('name', $service->name),
+                    'type' => $request->get('type', $service->type),
+                    'extra_cost' => $request->get('extra_cost', $service->extra_cost),
+                    'total_cost' => $request->get('total_cost', $service->total_cost),
+                    'client_id' => $request->get('client_id', $service->client_id),
+                    'technical_id' => $request->get('technical_id', $service->technical_id),
+                ]);
+
+                if ($request->exists('costs')){
+                    $service->costs = json_encode($request->get('costs'));
+                    $service->save();
+                }
+
+                $service->costs = json_decode($service->costs);
+                return $service;
+            });
+
+            return CustomReponse::success('Servicio modificado correctamente', $service);
+
+        }catch(\Exception $exception){
+            return CustomReponse::error('No ha sido posible modificar el servicio', $exception->getMessage());
+        }
+
+    }
+
+
+    public function destroy($id){
+
+        try{
+            
+            $delete = DB::transaction(function() use($id){
+
+                
+                $service = Services::findOrFail($id)->delete();
+
+                return compact('delete');
+
+            });
+            
+
+            return CustomReponse::success("Administrador desactivado correctamente", $delete);
+
+        }catch(\Exception $exception){
+
+            return CustomReponse::error('No ha sido posible crear el administrador');
+
+        }
 
     }
 }

@@ -151,10 +151,7 @@ class UserController extends Controller
                 
                 $user = User::findOrFail($id);
 
-                $user->update([
-                    'name' => $request->get('name'),
-                    'branch_office_id' => $request->get('branch_office_id'),
-                ]);
+                $user->update($request->all() );
                 
                 return compact('user');
 
@@ -163,7 +160,7 @@ class UserController extends Controller
             return CustomReponse::success("Administrador actualizados correctamente", $update);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('No ha sido posible crear el administrador');
+            return CustomReponse::error('No ha sido posible modificar el administrador');
         }
         
     }
