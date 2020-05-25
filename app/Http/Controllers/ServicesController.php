@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -15,14 +16,15 @@ class ServicesController extends Controller
 
     public function index(Request $request){
 
-        $service = Services::where(
-            'branch_office_id', $request->current_user->branch_office_id
-        )->get()->map(function ($service){
+        $services = Services::with(['client', 'technical'])
+            ->where('branch_office_id', $request->current_user->branch_office_id)->get();
+
+        $services->map(function ($service){
             $service->costs = json_decode($service->costs);
             return $service;
         });
 
-        return CustomReponse::success('Servicio encontrado', [ 'services' => $service ]);
+        return CustomReponse::success('Servicio encontrado', [ 'services' => $services ]);
         
     }
 

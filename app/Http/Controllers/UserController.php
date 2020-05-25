@@ -73,28 +73,24 @@ class UserController extends Controller
         try{
 
             $create = DB::transaction(function() use($request){
-                
-                if($request->current_user->role == 'admin'){
 
-                    $user = User::create([
-                            'name' => $request->get('name'),
-                            'last_name' => $request->get('last_name'),
-                            'email' => $request->get('email'),
-                            'password' => bcrypt($request->get('password')),
-                            'role' => $request->get('role'),
-                            'branch_office_id' => $request->current_user->branch_office_id
-                    ]);
+                $user = User::create([
+                        'name' => $request->get('name'),
+                        'last_name' => $request->get('last_name'),
+                        'email' => $request->get('email'),
+                        'password' => bcrypt($request->get('password')),
+                        'role' => $request->get('role'),
+                        'branch_office_id' => $request->current_user->branch_office_id
+                ]);
 
-                    return compact('user');
-                }
-
+                return compact('user');
 
             });
 
-            return CustomReponse::success("Administrador creado correctamente", $create);
+            return CustomReponse::success("Usuario creado correctamente", $create);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('No ha sido posible crear el administrador');
+            return CustomReponse::error('No ha sido posible crear el usuario');
         }
     }
 
@@ -109,7 +105,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
 
-        $users = User::where('branch_office_id', $request->current_user->branch_office_id);
+        $users = User::where([
+            'branch_office_id' =>  $request->current_user->branch_office_id
+        ])->whereIn('role', ['admin', 'asesor', 'tecnico']);
 
         if (!empty($request->get('role'))){
             $users->where('role', $request->get('role'));
@@ -151,7 +149,12 @@ class UserController extends Controller
                 
                 $user = User::findOrFail($id);
 
-                $user->update($request->all() );
+                $user->update($request->all());
+
+                if (!empty($request->get('password'))){
+                    $user->password = bcrypt($request->get('password'));
+                    $user->save();
+                }
                 
                 return compact('user');
 
