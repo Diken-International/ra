@@ -7,6 +7,6 @@ namespace App\Helpers;
 class RoleHelper
 {
 
-    public static $available_roles = ['tecnico', 'asesor'];
+    public static $available_roles = ['tecnico', 'asesor', 'cliente'];
 
 }

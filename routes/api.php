@@ -28,10 +28,12 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('users/admin', 'UserController@createAdmin')->name('users.create.admin');
     Route::get('users/me','UserController@me')->name('users.me');
 
+    Route::get('clients','ClientController@index')->name('clients.index');
+
     Route::get('services','ServicesController@index')->name('services.index');
     Route::post('services','ServicesController@store')->name('servies.store');
     Route::get('services/{service_id}','ServicesController@show')->name('servies.show');
     Route::patch('services/{service_id}','ServicesController@update')->name('servies.update');
     Route::delete('services/{service_id}','ServicesController@destroy')->name('servies.destroy');
-    
+
 });

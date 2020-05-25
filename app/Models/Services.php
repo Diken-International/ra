@@ -21,4 +21,16 @@ class Services extends Model
         'technical_id',
         'branch_office_id'
     ];
+
+    protected $hidden = [
+        'client_id'
+    ];
+
+    public function client(){
+        return $this->hasOne(Client::class,'id','client_id');
+    }
+
+    public function technical(){
+        return $this->hasOne(User::class, 'id', 'technical_id');
+    }
 }
