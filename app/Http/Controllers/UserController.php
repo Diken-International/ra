@@ -61,7 +61,6 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'last_name' => 'required',
-            'second_last_name' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|string',
             'role'    => ['required', Rule::in(RoleHelper::$available_roles)]
@@ -170,7 +169,7 @@ class UserController extends Controller
             return CustomReponse::success("Administrador actualizados correctamente", $update);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('No ha sido posible modificar el administrador', $exception->getMessage() );
+            return CustomReponse::error('No ha sido posible modificar el administrador');
         }
         
     }
