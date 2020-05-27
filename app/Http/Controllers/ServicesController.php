@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+use App\Rules\ValidRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -19,11 +19,6 @@ class ServicesController extends Controller
         $services = Services::with(['client', 'technical'])
             ->where('branch_office_id', $request->current_user->branch_office_id)->get();
 
-        $services->map(function ($service){
-            $service->costs = json_decode($service->costs);
-            return $service;
-        });
-
         return CustomReponse::success('Servicio encontrado', [ 'services' => $services ]);
         
     }
@@ -33,11 +28,9 @@ class ServicesController extends Controller
     	$validator = Validator::make($request->all(), [
             'name' => 'required',
             'type' => 'required',
-            'costs' => '',
-            'extra_cost' => '',
             'total_cost' => 'required',
-            'client_id'  => 'required',
-            'technical_id' => 'required'
+            'client_id'  => ['required', new ValidRole('cliente')],
+            'technical_id' => ['required', new ValidRole('tecnico')]
 
         ]);
 
@@ -52,7 +45,7 @@ class ServicesController extends Controller
             	$service = Services::create([
             	    'name' => $request->get('name'),
                     'type' => $request->get('type'),
-                    'costs' => json_encode($request->get('costs')),
+                    'costs' => $request->get('costs', []),
                     'extra_cost' => $request->get('extra_cost'),
                     'total_cost' => $request->get('total_cost'),
                     'client_id' => $request->get('client_id'),
@@ -60,7 +53,6 @@ class ServicesController extends Controller
                     'branch_office_id' => $request->current_user->branch_office_id
                  ]);
 
-            	$service->costs = json_decode($service->costs);
             	return $service;
 
             });
@@ -108,7 +100,6 @@ class ServicesController extends Controller
 
             $service = DB::transaction(function() use($request, $service){
 
-                // $request->cost = json_encode($request->get('costs'));
                 $service->update([
                     'name' => $request->get('name', $service->name),
                     'type' => $request->get('type', $service->type),
@@ -116,14 +107,9 @@ class ServicesController extends Controller
                     'total_cost' => $request->get('total_cost', $service->total_cost),
                     'client_id' => $request->get('client_id', $service->client_id),
                     'technical_id' => $request->get('technical_id', $service->technical_id),
+                    'costs' => $request->get('costs', $service->costs),
                 ]);
 
-                if ($request->exists('costs')){
-                    $service->costs = json_encode($request->get('costs'));
-                    $service->save();
-                }
-
-                $service->costs = json_decode($service->costs);
                 return $service;
             });
 
@@ -139,22 +125,15 @@ class ServicesController extends Controller
     public function destroy($id){
 
         try{
-            
-            $delete = DB::transaction(function() use($id){
 
-                
-                $service = Services::findOrFail($id)->delete();
+            $service = Services::find($id);
+            $service->delete();
 
-                return compact('delete');
-
-            });
-            
-
-            return CustomReponse::success("Administrador desactivado correctamente", $delete);
+            return CustomReponse::success("Servicio desactivado correctamente");
 
         }catch(\Exception $exception){
 
-            return CustomReponse::error('No ha sido posible crear el administrador');
+            return CustomReponse::error('No ha sido posible crear el servicio');
 
         }
 
