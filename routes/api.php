@@ -36,4 +36,8 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::patch('services/{service_id}','ServicesController@update')->name('servies.update');
     Route::delete('services/{service_id}','ServicesController@destroy')->name('servies.destroy');
 
+
+
+   
+
 });

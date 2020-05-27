@@ -19,7 +19,12 @@ class Services extends Model
         'total_cost',
         'client_id',
         'technical_id',
-        'branch_office_id'
+        'branch_office_id',
+        'address',
+        'postal_code',
+        'state',
+        'municipality',
+        'contact_phone'
     ];
 
     protected $hidden = [
