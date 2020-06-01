@@ -74,9 +74,11 @@ class UserController extends Controller
 
             $create = DB::transaction(function() use($request){
 
+                
                 $user = User::create([
                         'name' => $request->get('name'),
                         'last_name' => $request->get('last_name'),
+                        'second_last_name' => $request->get('second_last_name'),
                         'email' => $request->get('email'),
                         'password' => bcrypt($request->get('password')),
                         'role' => $request->get('role'),
@@ -84,6 +86,7 @@ class UserController extends Controller
                 ]);
 
                 return compact('user');
+                
 
             });
 
@@ -147,8 +150,11 @@ class UserController extends Controller
             $update = DB::transaction(function() use($request, $id){
                 //dd(  );
                 
-                $user = User::findOrFail($id);
-
+                
+                
+                $user = User::where('id',$id)->first();
+               
+                
                 $user->update($request->all());
 
                 if (!empty($request->get('password'))){
@@ -157,7 +163,7 @@ class UserController extends Controller
                 }
                 
                 return compact('user');
-
+                
             });
 
             return CustomReponse::success("Administrador actualizados correctamente", $update);

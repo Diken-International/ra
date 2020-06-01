@@ -19,12 +19,22 @@ class Services extends Model
         'total_cost',
         'client_id',
         'technical_id',
-        'branch_office_id'
+        'branch_office_id',
+        'address',
+        'postal_code',
+        'state',
+        'municipality',
+        'contact_phone'
     ];
 
-    protected $hidden = [
-        'client_id'
-    ];
+
+    public function getCostsAttribute($value){
+        return json_decode($value);
+    }
+
+    public function setCostsAttribute($value){
+        $this->attributes['costs'] =  json_encode($value);
+    }
 
     public function client(){
         return $this->hasOne(Client::class,'id','client_id');
