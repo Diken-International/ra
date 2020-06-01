@@ -57,7 +57,12 @@ class ServicesController extends Controller
                     'total_cost' => $request->get('total_cost'),
                     'client_id' => $request->get('client_id'),
                     'technical_id' => $request->get('technical_id'),
-                    'branch_office_id' => $request->current_user->branch_office_id
+                    'branch_office_id' => $request->current_user->branch_office_id,
+                    'address' => $request->get('address'),
+                    'postal_code' => $request->get('postal_code'),
+                    'state' => $request->get('state'),
+                    'municipality' => $request->get('municipality'),
+                    'contact_phone' => $request->get('contact_phone'),
                  ]);
 
             	$service->costs = json_decode($service->costs);
