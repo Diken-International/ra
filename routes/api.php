@@ -38,6 +38,13 @@ Route::group(['middleware' => ['jwt']], function () {
 
 
 
+    Route::get('services/{service_id}/messages','MessageController@index')->name('service.message.index');
+    Route::post('services/{service_id}/messages','MessageController@store')->name('service.message.store');
+    Route::patch('services/{service_id}/messages/{message_id}','MessageController@update')
+    ->name('service.message.update');
+
+
+
    
 
 });
