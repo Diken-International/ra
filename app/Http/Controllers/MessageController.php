@@ -21,7 +21,7 @@ class MessageController extends Controller
     	$message = Messages::where([
             'services_id'=>$services_id,
             'branch_office_id'=>$request->current_user->branch_office_id
-        ])->with(['author'])->get();
+        ])->with(['author:id,name'])->get();
 
     	return $message;
     }
