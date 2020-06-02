@@ -81,11 +81,84 @@ class MessageController extends Controller
 
     }
 
-    public function update(Request $request, $id){
+    public function update(Request $request, $services_id, $message_id){
 
-    	$toupdate = Messages::where('id',$id)->get();
+        $services_available_to_update = Services::where('branch_office_id', $request->current_user->branch_office_id)
+            ->get()
+            ->map(function($service){
+                return $service->id;
+        });
 
-    	dd($toupdate);
+          
+        $author_avilable_to_update = User::where('id',$request->current_user->id)
+        ->get()
+        ->map(function($author){
+                return $author->id;
+        });
+
+       
+            
+        $validator = Validator::make($request->all(), [
+
+            'message' => 'required',
+            'author_id' => ['required', Rule::in($author_avilable_to_update)],
+            'branch_office_id' => 'required',
+            'priority' => 'required',
+            'services_id' => ['required', Rule::in($services_available_to_update)]
+
+        ]);
+
+        if ($validator->fails()) {
+            return CustomReponse::error('Error al validar', $validator->errors());
+        }
+
+        try{
+
+            $message_to_update = DB::transaction(function() use($request, $services_id, $message_id, $author_avilable_to_update){
+
+                $toupdate = Messages::where('id',$message_id)->first();
+
+                $toupdate->update([
+                    'message'    => $request->get('message'),
+                    'author_id'  => $author_avilable_to_update,
+                    'branch_office_id'=> $request->current_user->branch_office_id,
+                    'priority'   => $request->get('priority'),
+                    'services_id'=> $services_id
+                ]);
+
+                return compact('message');
+            });
+
+            return CustomReponse::success('Mensaje actualizado correctamente', $message_to_update);
+
+        }catch(\Exception $exception){
+            return CustomReponse::error('El mensaje no se modifico correctamente');
+        }
+
+    }
+
+    public function destroy(Request $request, $services_id, $message_id){
+
+        try{
+
+            $message_to_delete = DB::transaction(function() use($request, $services_id, $message_id){
+
+                $todelete = Messages::where('id',$message_id)->first();
+
+                $todelete->delete();
+
+                return compact('todelete');
+            });
+
+            return CustomReponse::success('Mensaje eliminado correctamente', $message_to_delete);
+
+        }catch(\Exception $exception){
+
+             return CustomReponse::error('El mensaje no se elimino correctamente');
+
+        }
+
+        //dd($todelete);
 
     }
 }
