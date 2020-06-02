@@ -13,10 +13,12 @@ class Messages extends Model
     protected $table = 'messages';
 
     protected $fillable = [
-    	'created_date',
+
     	'message',
     	'autor_id',
+    	'branch_office_id',
     	'priority',
     	'services_id',
+        
     ];
 }

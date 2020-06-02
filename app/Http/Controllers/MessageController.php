@@ -15,17 +15,25 @@ class MessageController extends Controller
 {
     //
 
-    public function index(Request $request){
-    	$message = Messages::all();
-    	dd($message);
+    public function index(Request $request, $services_id){
+
+        
+
+    	$message = Messages::where([
+            'services_id'=>$services_id,
+            'branch_office_id'=>$request->current_user->branch_office_id
+        ])->get();
+
+    	return $message;
     }
 
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
-            //'created_date' => 'required',
+
             'message' => 'required',
             'autor_id' => 'required',
+            'branch_office_id' => 'required',
             'priority' => 'required',
             'services_id' => 'required'
 
@@ -39,7 +47,7 @@ class MessageController extends Controller
 
         	$messages = DB::transaction(function() use($request){
 
-        		//dd($request->all() );
+        		
 
         		$service = Services::where([
             		'branch_office_id' => $request->current_user->branch_office_id
@@ -47,9 +55,10 @@ class MessageController extends Controller
 
         		
         		$message = Messages::create([
-        			'created_date' => $request->get('created_date'),
+        			
         			'message' => $request->get('message'),
         			'autor_id'=> $request->current_user->id,
+                    'branch_office_id'=> $request->current_user->branch_office_id,
         			'priority'=> $request->get('priority'),
         			'services_id' => $service->id,
         		]);
