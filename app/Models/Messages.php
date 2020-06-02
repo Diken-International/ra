@@ -15,10 +15,19 @@ class Messages extends Model
     protected $fillable = [
 
     	'message',
-    	'autor_id',
+    	'author_id',
     	'branch_office_id',
     	'priority',
     	'services_id',
-        
     ];
+
+    protected $hidden = [
+        'author_id'
+    ];
+
+
+    public function author(){
+        return $this->belongsTo(User::class, 'author_id', 'id');
+    }
+
 }

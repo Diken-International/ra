@@ -15,11 +15,11 @@ class AddFieldsInServicesTable extends Migration
     {
         Schema::table('services', function (Blueprint $table) {
             //
-            $table->string('address');
-            $table->string('postal_code');
-            $table->string('state');
-            $table->string('municipality');
-            $table->string('contact_phone');
+            $table->string('address')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('state')->nullable();
+            $table->string('municipality')->nullable();
+            $table->string('contact_phone')->nullable();
 
         });
     }

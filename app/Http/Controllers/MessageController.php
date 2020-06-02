@@ -10,6 +10,7 @@ use App\Helpers\CustomReponse;
 
 use App\Models\Messages;
 use App\Models\Services;
+use Illuminate\Validation\Rule;
 
 class MessageController extends Controller
 {
@@ -17,25 +18,28 @@ class MessageController extends Controller
 
     public function index(Request $request, $services_id){
 
-        
-
     	$message = Messages::where([
             'services_id'=>$services_id,
             'branch_office_id'=>$request->current_user->branch_office_id
-        ])->get();
+        ])->with(['author'])->get();
 
     	return $message;
     }
 
     public function store(Request $request){
 
-    	$validator = Validator::make($request->all(), [
+        $services_available = Services::where('branch_office_id', $request->current_user->branch_office_id)
+            ->get()
+            ->map(function($service){
+            return $service->id;
+        });
 
+    	$validator = Validator::make($request->all(), [
             'message' => 'required',
-            'autor_id' => 'required',
+            'author_id' => 'required',
             'branch_office_id' => 'required',
             'priority' => 'required',
-            'services_id' => 'required'
+            'services_id' => ['required', Rule::in($services_available)]
 
         ]);
 
@@ -57,7 +61,7 @@ class MessageController extends Controller
         		$message = Messages::create([
         			
         			'message' => $request->get('message'),
-        			'autor_id'=> $request->current_user->id,
+        			'author_id'=> $request->current_user->id,
                     'branch_office_id'=> $request->current_user->branch_office_id,
         			'priority'=> $request->get('priority'),
         			'services_id' => $service->id,
