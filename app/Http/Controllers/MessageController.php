@@ -10,6 +10,7 @@ use App\Helpers\CustomReponse;
 
 use App\Models\Messages;
 use App\Models\Services;
+use App\Models\User;
 use Illuminate\Validation\Rule;
 
 class MessageController extends Controller
@@ -116,23 +117,25 @@ class MessageController extends Controller
 
             $message_to_update = DB::transaction(function() use($request, $services_id, $message_id, $author_avilable_to_update){
 
-                $toupdate = Messages::where('id',$message_id)->first();
-
-                $toupdate->update([
+                $message = Messages::where('id',$message_id)->first();
+                
+                
+                $message->update([
                     'message'    => $request->get('message'),
-                    'author_id'  => $author_avilable_to_update,
+                    'author_id'  => $author_avilable_to_update[0],
                     'branch_office_id'=> $request->current_user->branch_office_id,
                     'priority'   => $request->get('priority'),
                     'services_id'=> $services_id
                 ]);
 
                 return compact('message');
+                
             });
 
             return CustomReponse::success('Mensaje actualizado correctamente', $message_to_update);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('El mensaje no se modifico correctamente');
+            return CustomReponse::error('El mensaje no se modifico correctamente', $exception->getMessage());
         }
 
     }
@@ -143,11 +146,11 @@ class MessageController extends Controller
 
             $message_to_delete = DB::transaction(function() use($request, $services_id, $message_id){
 
-                $todelete = Messages::where('id',$message_id)->first();
+                $message = Messages::where('id',$message_id)->first();
 
-                $todelete->delete();
+                $message->delete();
 
-                return compact('todelete');
+                return compact('message');
             });
 
             return CustomReponse::success('Mensaje eliminado correctamente', $message_to_delete);
