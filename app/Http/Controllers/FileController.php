@@ -7,6 +7,7 @@ use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File as FileFacade;
 use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
@@ -28,10 +29,16 @@ class FileController extends Controller
             'images/'.strtolower(class_basename($request->get('model'))).'/'.$request->get('model_id'),
                 $request->file('file'));
 
+        
+        $type = FileFacade::extension($path);
+
+        
         $file = File::create([
             'model' => $request->get('model'),
             'model_id' => $request->get('model_id'),
-            'path' => $path
+            'path' => $path,
+            'category'=>$request->get('category'),
+            'type' => $type,
         ]);
 
         return CustomReponse::success("El archivo ha sido subido exitosamente", compact('file'));
@@ -41,6 +48,13 @@ class FileController extends Controller
     public function show(Request $request, $path){
         if (!Storage::exists($path)){
             return CustomReponse::error("No se encontro la imagen");
+        }
+
+        if(FileFacade::extension($path) == 'docx'){
+
+            return response()->download(storage_path('app/'.$path));
+            //dd($path);
+
         }
 
         $img = Image::make(Storage::get($path));

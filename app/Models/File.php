@@ -9,7 +9,9 @@ class File extends Model
     protected $fillable = [
         'model',
         'model_id',
-        'path'
+        'path',
+        'category',
+        'type',
     ];
 
     protected $appends = ['url'];

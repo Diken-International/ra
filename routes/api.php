@@ -45,7 +45,7 @@ Route::group(['middleware' => ['jwt']], function () {
    
     Route::post('files', 'FileController@upload')->name('files.upload');
     Route::get('files/{path}', 'FileController@show')
-        ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png)')
+        ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
         ->name('files.show');
 
 });
