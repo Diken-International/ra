@@ -53,7 +53,7 @@ class FileController extends Controller
         if(FileFacade::extension($path) == 'docx'){
 
             return response()->download(storage_path('app/'.$path));
-            //dd($path);
+          /* Comentarios de Rutas */
 
         }
 
