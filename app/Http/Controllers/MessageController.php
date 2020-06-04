@@ -91,18 +91,15 @@ class MessageController extends Controller
         });
 
           
-        $author_avilable_to_update = User::where('id',$request->current_user->id)
-        ->get()
-        ->map(function($author){
-                return $author->id;
-        });
+        $author_avilable_to_update = User::where('id',$request->current_user->id)->first();
+        
 
        
             
         $validator = Validator::make($request->all(), [
 
             'message' => 'required',
-            'author_id' => ['required', Rule::in($author_avilable_to_update)],
+            'author_id' => ['required', Rule::in($author_avilable_to_update->id)],
             'branch_office_id' => 'required',
             'priority' => 'required',
             'services_id' => ['required', Rule::in($services_available_to_update)]
@@ -119,16 +116,17 @@ class MessageController extends Controller
 
                 $message = Messages::where('id',$message_id)->first();
                 
-                
+                    
                 $message->update([
                     'message'    => $request->get('message'),
-                    'author_id'  => $author_avilable_to_update[0],
+                    'author_id'  => $author_avilable_to_update->id,
                     'branch_office_id'=> $request->current_user->branch_office_id,
                     'priority'   => $request->get('priority'),
                     'services_id'=> $services_id
                 ]);
 
                 return compact('message');
+                
                 
             });
 
