@@ -28,7 +28,9 @@ class Services extends Model
         'postal_code',
         'state',
         'municipality',
-        'contact_phone'
+        'contact_phone',
+        'progress_status',
+        'description'
     ];
 
     public function getCostsAttribute($value){
