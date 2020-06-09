@@ -16,6 +16,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get("example", function (){
-    return view('example');
-});
+Route::get("example",'LettersController@download');
