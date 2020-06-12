@@ -43,6 +43,8 @@ class ServicesController extends Controller
         try{
             $result = DB::transaction(function () use($request){
 
+
+
             	$service = Services::create([
             	    'name' => $request->get('name'),
                     'type' => $request->get('type'),
@@ -57,6 +59,8 @@ class ServicesController extends Controller
                     'state' => $request->get('state'),
                     'municipality' => $request->get('municipality'),
                     'contact_phone' => $request->get('contact_phone'),
+                    'progress_status' => $request->get('progress_status'),
+                    'description' => $request->get('description')
                  ]);
 
             	return $service;
@@ -115,6 +119,8 @@ class ServicesController extends Controller
                     'client_id' => $request->get('client_id', $service->client_id),
                     'technical_id' => $request->get('technical_id', $service->technical_id),
                     'costs' => $request->get('costs', $service->costs),
+                    'progress_status' => $request->get('progress_status'),
+                    'description' => $request->get('description')
                 ]);
 
                 return $service;

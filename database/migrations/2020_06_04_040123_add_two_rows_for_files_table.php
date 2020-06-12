@@ -17,7 +17,7 @@ class AddTwoRowsForFilesTable extends Migration
         Schema::table('files', function (Blueprint $table) {
             //
             $table->string('category')->default('');
-            $table->string('type');
+            $table->string('type')->default('default');
 
         });
     }
@@ -32,7 +32,7 @@ class AddTwoRowsForFilesTable extends Migration
         //
         Schema::table('files', function (Blueprint $table) {
             //
-            $table->dropColumn('category')->default('');
+            $table->dropColumn('category');
             $table->dropColumn('type');
 
         });
