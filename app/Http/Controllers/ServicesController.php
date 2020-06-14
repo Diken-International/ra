@@ -24,6 +24,24 @@ class ServicesController extends Controller
         
     }
 
+    public function index2(Request $request){
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+        $axios = Services::all();
+        return response()->json(['data' => $axios]);
+        
+    }
+    public function toFind(Request $request, $id){
+
+        header('Access-Control-Allow-Origin: *');
+        header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept");
+        header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+
+        $query = Services::where('id',$id)->get();
+        return response()->json($query);
+    }
+
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
