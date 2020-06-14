@@ -47,5 +47,8 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::get('files/{path}', 'FileController@show')
         ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
         ->name('files.show');
+        
+    Route::get('repairs','RepairsController@index')->name('repairs.index');    
+    Route::post('repairs','RepairsController@store')->name('repair.store');  
 
 });
