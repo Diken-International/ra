@@ -15,10 +15,17 @@ class CreateRepairPartsTable extends Migration
     {
         Schema::create('repair_parts', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('product_id');
-            $table->foreign('product_id')->references('id')->on('products');
-            $table->integer('repair_parts_id');
-            $table->foreign('repair_parts_id')->references('id')->on('repairs');
+            $table->string('code');
+            $table->integer('parts_num');
+            $table->integer('number_diken');
+            $table->integer('category_repair_parts_id');
+            $table->foreign('category_repair_parts_id')->references('id')->on('category_repair_parts');
+            $table->integer('product_repair_parts_id');
+            $table->foreign('product_repair_parts_id')->references('id')->on('products_repair_parts');
+            $table->string('name');
+            $table->string('features');
+            $table->string('quantity');
+            $table->integer('number_of_part');
             $table->timestamps();
         });
     }

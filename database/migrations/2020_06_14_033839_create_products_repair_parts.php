@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddNumberOfPartToRepairPartsTable extends Migration
+class CreateProductsRepairParts extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,10 @@ class AddNumberOfPartToRepairPartsTable extends Migration
      */
     public function up()
     {
-        Schema::table('repair_parts', function (Blueprint $table) {
-            //
-            $table->integer('number_of_part');
+        //
+         Schema::create('products_repair_parts', function(Blueprint $table){
+            $table->increments('id');
+            $table->string('name');
         });
     }
 
@@ -26,9 +27,7 @@ class AddNumberOfPartToRepairPartsTable extends Migration
      */
     public function down()
     {
-        Schema::table('repair_parts', function (Blueprint $table) {
-            //
-            $table->dropColumn('number_of_part');
-        });
+        //
+        Schema::dropIfExists('products_repair_parts');
     }
 }

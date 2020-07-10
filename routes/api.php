@@ -49,6 +49,8 @@ Route::group(['middleware' => ['jwt']], function () {
         ->name('files.show');
         
     Route::get('repairs','RepairsController@index')->name('repairs.index');    
-    Route::post('repairs','RepairsController@store')->name('repair.store');  
+    Route::post('repairs','RepairsController@store')->name('repair.store');
+    Route::patch('repairs/{repair_id}','RepairsController@update')
+    ->name('repair.update');  
 
 });
