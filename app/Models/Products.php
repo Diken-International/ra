@@ -11,4 +11,6 @@ class Products extends Model
     use SoftDeletes;
     
     protected $table = 'products';
+
+    protected $guarded = [];
 }
