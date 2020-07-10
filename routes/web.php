@@ -17,3 +17,6 @@ Route::get('/', function () {
 });
 
 Route::get("example",'LettersController@download');
+
+Route::get('axios','ServicesController@index2');
+Route::get('axiosn/{id}','ServicesController@toFind');
