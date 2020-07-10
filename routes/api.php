@@ -42,20 +42,20 @@ Route::group(['middleware' => ['jwt']], function () {
     ->name('service.message.update');
     Route::delete('services/{service_id}/messages/{message_id}','MessageController@destroy')->name('service.message.destroy');
 
-   
+
     Route::post('files', 'FileController@upload')->name('files.upload');
     Route::get('files/{path}', 'FileController@show')
         ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
         ->name('files.show');
-        
-    Route::get('repairs','RepairsController@index')->name('repairs.index');    
+
+    Route::get('repairs','RepairsController@index')->name('repairs.index');
     Route::post('repairs','RepairsController@store')->name('repair.store');
-    Route::patch('repairs/{repair_id}','RepairsController@update')
-    ->name('repair.update');  
+    Route::put('repairs/{repair_id}','RepairsController@update')->name('repair.update');
+    Route::get('repairs/products', 'RepairsController@products')->name('repair.products');
+    Route::get('repairs/categories', 'RepairsController@categories')->name('repair.categories');
 
     Route::get('products','ProductsController@index')->name('products.index');
     Route::post('products','ProductsController@store')->name('products.store');
-    Route::put('products/{product_id}','ProductsController@update')
-    ->name('products.update');
-    Route::delete('products/{product_id}','ProductsController@destroy')->name('service.message.destroy');  
+    Route::put('products/{product_id}','ProductsController@update')->name('products.update');
+    Route::delete('products/{product_id}','ProductsController@destroy')->name('service.message.destroy');
 });

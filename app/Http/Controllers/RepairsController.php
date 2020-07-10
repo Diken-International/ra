@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CategoryRepairParts;
+use App\Models\ProductRepairParts;
+use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -15,15 +18,18 @@ class RepairsController extends Controller
     //
     public function index(Request $request){
 
-    	$repair = RepairsParts::all();
-    	dd($request->current_user->branch_office_id);
+    	$repairs = RepairsParts::with(['category', 'product'])->get();
+
+    	return CustomReponse::success('Refacciones obtenidas', [
+    	    'repairs' => $repairs
+        ]);
     }
 
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
 
-            
+
             'code' => 'required',
             'parts_num' => 'required',
             'number_diken' => 'required',
@@ -66,7 +72,7 @@ class RepairsController extends Controller
                 'name' => 'required',
                 'quantity' => 'required',
                 'price' => 'required',
-                
+
 
             ]);
 
@@ -89,9 +95,25 @@ class RepairsController extends Controller
                 return CustomReponse::success('Reparacion corregida correctamente', $repairs);
 
             }catch(\Exception $exception){
-                
+
                 return CustomReponse::error('La reparacion no se guardo correctamente', $exception->getMessage());
             }
+
+    }
+
+    public function products(Request $request){
+
+        $products = ProductRepairParts::all();
+
+        return CustomReponse::success("Productos obtenidos correctamente", ['products' => $products]);
+
+    }
+
+    public function categories(Request $request){
+
+        $categories = CategoryRepairParts::all();
+
+        return CustomReponse::success("Categorías obtenidos correctamente", ['categories' => $categories]);
 
     }
 }

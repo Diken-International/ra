@@ -17,7 +17,7 @@ class ProductsController extends Controller
 
     	$products = Products::all();
 
-    	return $products;
+    	return CustomReponse::success("Productos obtenidos correctamente", ['products' => $products]);
 
     }
 
@@ -25,7 +25,7 @@ class ProductsController extends Controller
 
     	$validator = Validator::make($request->all(), [
 
-            
+
             'code' => 'required',
             'name' => 'required',
             'description' => 'required',
@@ -35,7 +35,7 @@ class ProductsController extends Controller
             'benefits' => 'required',
             'cost' => 'required',
             'price' => 'required',
-            
+
 
         ]);
 
@@ -57,7 +57,7 @@ class ProductsController extends Controller
 
         }catch(\Exception $exception){
 
-        	
+
         	return CustomReponse::error('El producto no se guardo correctamente', $exception->getMessage());
         }
 
@@ -67,7 +67,7 @@ class ProductsController extends Controller
 
     	$validator = Validator::make($request->all(), [
 
-            
+
             'code' => 'required',
             'name' => 'required',
             'description' => 'required',
@@ -77,7 +77,7 @@ class ProductsController extends Controller
             'benefits' => 'required',
             'cost' => 'required',
             'price' => 'required',
-            
+
 
         ]);
 

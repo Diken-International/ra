@@ -22,4 +22,12 @@ class RepairsParts extends Model
     	'quantity',
     	'number_of_part',
     ];
+
+    public function category(){
+        return $this->hasOne(CategoryRepairParts::class, 'id', 'category_repair_parts_id');
+    }
+
+    public function product(){
+        return $this->hasOne(ProductRepairParts::class,'id', 'product_repair_parts_id');
+    }
 }
