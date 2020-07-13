@@ -48,6 +48,7 @@ Route::group(['middleware' => ['jwt']], function () {
 
 
     Route::post('files', 'FileController@upload')->name('files.upload');
+    Route::delete('files/{file_id}', 'FileController@delete')->name('files.delete');
 
     Route::get('repairs','RepairsController@index')->name('repairs.index');
     Route::post('repairs','RepairsController@store')->name('repair.store');

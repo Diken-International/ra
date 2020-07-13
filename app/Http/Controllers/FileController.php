@@ -29,10 +29,10 @@ class FileController extends Controller
             'images/'.strtolower(class_basename($request->get('model'))).'/'.$request->get('model_id'),
                 $request->file('file'));
 
-        
+
         $type = FileFacade::extension($path);
 
-        
+
         $file = File::create([
             'model' => $request->get('model'),
             'model_id' => $request->get('model_id'),
@@ -53,7 +53,7 @@ class FileController extends Controller
         if(FileFacade::extension($path) == 'docx'){
 
             return response()->download(storage_path('app/'.$path));
-          
+
 
         }
 
@@ -66,6 +66,27 @@ class FileController extends Controller
         }
 
         return $img->response();
+
+    }
+
+    public function delete(Request $request, $file_id){
+
+        $file = File::where('id',  $file_id)->first();
+
+        if(!$file instanceof  File){
+            return CustomReponse::error("No se encontro la archivo");
+        }
+
+        if (!Storage::exists($file->path)){
+            return CustomReponse::error("No se encontro la imagen");
+        }
+
+        if (Storage::delete($file->path)){
+            $file->delete();
+        }
+
+
+        return CustomReponse::success("Imagen eliminada correctamente");
 
     }
 }
