@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PaginatorHelper;
 use App\Models\CategoryRepairParts;
 use App\Models\ProductRepairParts;
 use App\Models\Products;
@@ -20,9 +21,10 @@ class RepairsController extends Controller
 
     	$repairs = RepairsParts::with(['category', 'product'])->get();
 
-    	return CustomReponse::success('Refacciones obtenidas', [
-    	    'repairs' => $repairs
-        ]);
+    	$data = PaginatorHelper::create($repairs, $request);
+
+    	return CustomReponse::success("Reparaciones obtenidas", $data);
+
     }
 
     public function store(Request $request){

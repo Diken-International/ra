@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\CustomReponse;
+use App\Helpers\PaginatorHelper;
 use App\Helpers\RoleHelper;
 use App\Models\BranchOffice;
 use App\Models\User;
@@ -69,12 +70,12 @@ class UserController extends Controller
         if ($validator->fails()) {
             return CustomReponse::error('Error al validar', $validator->errors());
         }
-        
+
         try{
 
             $create = DB::transaction(function() use($request){
 
-                
+
                 $user = User::create([
                         'name' => $request->get('name'),
                         'last_name' => $request->get('last_name'),
@@ -86,7 +87,7 @@ class UserController extends Controller
                 ]);
 
                 return compact('user');
-                
+
 
             });
 
@@ -122,8 +123,10 @@ class UserController extends Controller
 
         $users = $users->get();
 
-        return CustomReponse::success("Usuarios encontrados correctamente", [ 'users' => $users] );
-        
+        $data = PaginatorHelper::create($users, $request);
+
+        return CustomReponse::success("Usuarios encontrados correctamente", $data );
+
     }
 
     public function show(Request $request, $user_id){
@@ -139,31 +142,31 @@ class UserController extends Controller
         }
 
         return CustomReponse::error("El usuario no ha sido obtenido correctamente");
-        
+
 
     }
 
     public function update(Request $request, $id){
-        
+
         try{
 
             $update = DB::transaction(function() use($request, $id){
                 //dd(  );
-                
-                
-                
+
+
+
                 $user = User::where('id',$id)->first();
-               
-                
+
+
                 $user->update($request->all());
 
                 if (!empty($request->get('password'))){
                     $user->password = bcrypt($request->get('password'));
                     $user->save();
                 }
-                
+
                 return compact('user');
-                
+
             });
 
             return CustomReponse::success("Administrador actualizados correctamente", $update);
@@ -171,16 +174,16 @@ class UserController extends Controller
         }catch(\Exception $exception){
             return CustomReponse::error('No ha sido posible modificar el administrador');
         }
-        
+
     }
 
     public function destroy(Request $request, $id){
 
         try{
-            
+
             $delete = DB::transaction(function() use($id){
 
-                
+
                 $user = auth()->user()->role;
 
                 if($user == 'Super_Admin' || $user == 'admin'){
@@ -192,7 +195,7 @@ class UserController extends Controller
 
             });
 
-            return CustomReponse::success("Administrador desactivado correctamente", $delete);
+            return CustomReponse::success("Usuario desactivado correctamente", $delete);
 
         }catch(\Exception $exception){
 
@@ -200,8 +203,8 @@ class UserController extends Controller
 
         }
 
-        
-    }   
+
+    }
 
 
 

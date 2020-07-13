@@ -21,5 +21,18 @@ class UsersTableSeeder extends Seeder
             'role' => 'admin',
             'branch_office_id' => $branch_office->id
         ]);
+
+        $faker = \Faker\Factory::create();
+
+        for ($i=0; $i<= 450; $i++){
+            User::create([
+                'email' => $faker->email,
+                'password' => Hash::make('test'),
+                'name' => $faker->name,
+                'last_name' => $faker->lastName,
+                'role' => \Illuminate\Support\Arr::random(['admin', 'tecnico', 'asesor', 'cliente']),
+                'branch_office_id' => $branch_office->id
+            ]);
+        }
     }
 }

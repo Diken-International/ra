@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\CustomReponse;
+use App\Helpers\PaginatorHelper;
 use App\Models\Client;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -24,7 +25,9 @@ class ClientController extends Controller
 
         $users = $users->get();
 
-        return CustomReponse::success("Clientes encontrados correctamente", [ 'users' => $users] );
+        $data = PaginatorHelper::create($users, $request);
+
+        return CustomReponse::success("Clientes encontrados correctamente", $data );
 
     }
 

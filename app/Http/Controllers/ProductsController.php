@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PaginatorHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,9 @@ class ProductsController extends Controller
 
     	$products = Products::all();
 
-    	return CustomReponse::success("Productos obtenidos correctamente", ['products' => $products]);
+    	$data = PaginatorHelper::create($products, $request);
+
+    	return CustomReponse::success("Productos obtenidos correctamente", $data);
 
     }
 
