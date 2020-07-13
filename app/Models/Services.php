@@ -30,7 +30,10 @@ class Services extends Model
         'municipality',
         'contact_phone',
         'progress_status',
-        'description'
+        'description',
+        'service_start',
+        'service_end',
+        'product_id'
     ];
 
     public function getCostsAttribute($value){

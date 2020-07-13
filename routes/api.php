@@ -10,6 +10,10 @@ Route::group([
     Route::post('payload', 'AuthController@payload');
 });
 
+Route::get('files/{path}', 'FileController@show')
+    ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
+    ->name('files.show');
+
 /**
  * POST    /modelo/            -> store
  * GET     /modelo/            -> index
@@ -44,9 +48,6 @@ Route::group(['middleware' => ['jwt']], function () {
 
 
     Route::post('files', 'FileController@upload')->name('files.upload');
-    Route::get('files/{path}', 'FileController@show')
-        ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
-        ->name('files.show');
 
     Route::get('repairs','RepairsController@index')->name('repairs.index');
     Route::post('repairs','RepairsController@store')->name('repair.store');

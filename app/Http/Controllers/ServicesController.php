@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\AvailableHelper;
+use App\Models\Products;
 use App\Rules\ValidRole;
 use App\Models\File;
 use Illuminate\Http\Request;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use App\Helpers\CustomReponse;
 
 use App\Models\Services;
+use Illuminate\Validation\Rule;
 
 class ServicesController extends Controller
 {
@@ -21,36 +24,36 @@ class ServicesController extends Controller
             ->where('branch_office_id', $request->current_user->branch_office_id)->get();
 
         return CustomReponse::success('Servicio encontrado', [ 'services' => $services ]);
-        
+
     }
 
     public function store(Request $request){
 
-    	$validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'type' => 'required',
-            'total_cost' => 'required',
-            'client_id'  => ['required', new ValidRole('cliente')],
-            'technical_id' => ['required', new ValidRole('tecnico')]
+        $products_available = (new AvailableHelper)->availableByBranchOffice(Products::class, $request->current_user->branch_office_id);
 
+    	$validator = Validator::make($request->all(), [
+            'type' => ['required', Rule::in('preventivo', 'correctivo', 'virtual')],
+            'client_id'  => ['required', new ValidRole('cliente')],
+            'technical_id' => ['required', new ValidRole('tecnico')],
+            'service_start' => 'required|date',
+            'service_end' => 'required|date',
+            'product_id' => ['required', Rule::in($products_available)]
         ]);
 
         if ($validator->fails()) {
             return CustomReponse::error('Error al validar', $validator->errors());
         }
 
-        
+
         try{
             $result = DB::transaction(function () use($request){
 
-
-
             	$service = Services::create([
-            	    'name' => $request->get('name'),
+            	    'name' => $request->get('name', ''),
                     'type' => $request->get('type'),
                     'costs' => $request->get('costs', []),
                     'extra_cost' => $request->get('extra_cost'),
-                    'total_cost' => $request->get('total_cost'),
+                    'total_cost' => $request->get('total_cost', 0),
                     'client_id' => $request->get('client_id'),
                     'technical_id' => $request->get('technical_id'),
                     'branch_office_id' => $request->current_user->branch_office_id,
@@ -59,8 +62,11 @@ class ServicesController extends Controller
                     'state' => $request->get('state'),
                     'municipality' => $request->get('municipality'),
                     'contact_phone' => $request->get('contact_phone'),
-                    'progress_status' => $request->get('progress_status'),
-                    'description' => $request->get('description')
+                    'progress_status' => $request->get('progress_status', 50),
+                    'description' => $request->get('description'),
+                    'service_start' => $request->get('service_start'),
+                    'service_end' => $request->get('service_end'),
+                    'product_id' => $request->get('product_id')
                  ]);
 
             	return $service;
@@ -88,8 +94,6 @@ class ServicesController extends Controller
             return CustomReponse::error("Servicio no encontrado");
         }
 
-        $service->costs = json_decode($service->costs);
-
         $service->files = File::where(['model' => str_replace('\\', '/', get_class($service)), 'model_id' => $service->id])->get();
 
         return CustomReponse::success("Servicio encontrados correctamente", [ 'service' => $service] );
@@ -106,7 +110,7 @@ class ServicesController extends Controller
         if (!$service instanceof Services){
             return CustomReponse::error("Servicio no encontrado");
         }
-        
+
         try{
 
             $service = DB::transaction(function() use($request, $service){
