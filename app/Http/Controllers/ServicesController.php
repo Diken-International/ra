@@ -10,7 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 
 use App\Models\Services;
 use Illuminate\Validation\Rule;
@@ -23,7 +23,7 @@ class ServicesController extends Controller
         $services = Services::with(['client', 'technical'])
             ->where('branch_office_id', $request->current_user->branch_office_id)->get();
 
-        return CustomReponse::success('Servicio encontrado', [ 'services' => $services ]);
+        return CustomResponse::success('Servicio encontrado', [ 'services' => $services ]);
 
     }
 
@@ -41,7 +41,7 @@ class ServicesController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
 
@@ -73,11 +73,11 @@ class ServicesController extends Controller
 
             });
 
-            return CustomReponse::success('Servicio creado correctamente', $result);
+            return CustomResponse::success('Servicio creado correctamente', $result);
 
         }catch (\Exception $exception){
 
-            return CustomReponse::error('El servicio no ha podido ser creado', $exception->getMessage());
+            return CustomResponse::error('El servicio no ha podido ser creado', $exception->getMessage());
 
         }
 
@@ -91,12 +91,12 @@ class ServicesController extends Controller
         ])->first();
 
         if (!$service instanceof Services){
-            return CustomReponse::error("Servicio no encontrado");
+            return CustomResponse::error("Servicio no encontrado");
         }
 
         $service->files = File::where(['model' => str_replace('\\', '/', get_class($service)), 'model_id' => $service->id])->get();
 
-        return CustomReponse::success("Servicio encontrados correctamente", [ 'service' => $service] );
+        return CustomResponse::success("Servicio encontrados correctamente", [ 'service' => $service] );
 
     }
 
@@ -108,7 +108,7 @@ class ServicesController extends Controller
         ])->first();
 
         if (!$service instanceof Services){
-            return CustomReponse::error("Servicio no encontrado");
+            return CustomResponse::error("Servicio no encontrado");
         }
 
         $products_available = (new AvailableHelper)->availableByBranchOffice(Products::class, $request->current_user->branch_office_id);
@@ -123,7 +123,7 @@ class ServicesController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
         try{
@@ -146,10 +146,10 @@ class ServicesController extends Controller
                 return $service;
             });
 
-            return CustomReponse::success('Servicio modificado correctamente', $service);
+            return CustomResponse::success('Servicio modificado correctamente', $service);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('No ha sido posible modificar el servicio', $exception->getMessage());
+            return CustomResponse::error('No ha sido posible modificar el servicio', $exception->getMessage());
         }
 
     }
@@ -162,11 +162,11 @@ class ServicesController extends Controller
             $service = Services::find($id);
             $service->delete();
 
-            return CustomReponse::success("Servicio desactivado correctamente");
+            return CustomResponse::success("Servicio desactivado correctamente");
 
         }catch(\Exception $exception){
 
-            return CustomReponse::error('No ha sido posible crear el servicio');
+            return CustomResponse::error('No ha sido posible crear el servicio');
 
         }
 

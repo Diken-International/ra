@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 use App\Helpers\PaginatorHelper;
 use App\Helpers\RoleHelper;
 use App\Models\BranchOffice;
@@ -25,7 +25,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
 
@@ -46,11 +46,11 @@ class UserController extends Controller
 
             });
 
-            return CustomReponse::success('Administrador creado correctamente', $result);
+            return CustomResponse::success('Administrador creado correctamente', $result);
 
         }catch (\Exception $exception){
 
-            return CustomReponse::error('No ha sido posible crear el usuario');
+            return CustomResponse::error('No ha sido posible crear el usuario');
 
         }
 
@@ -68,7 +68,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
         try{
@@ -91,16 +91,16 @@ class UserController extends Controller
 
             });
 
-            return CustomReponse::success("Usuario creado correctamente", $create);
+            return CustomResponse::success("Usuario creado correctamente", $create);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('No ha sido posible crear el usuario');
+            return CustomResponse::error('No ha sido posible crear el usuario');
         }
     }
 
     public function me()
     {
-        return CustomReponse::success(
+        return CustomResponse::success(
             "Usuario obtenido correctamente",
             ['user' => auth()->user()]
         );
@@ -125,7 +125,7 @@ class UserController extends Controller
 
         $data = PaginatorHelper::create($users, $request);
 
-        return CustomReponse::success("Usuarios encontrados correctamente", $data );
+        return CustomResponse::success("Usuarios encontrados correctamente", $data );
 
     }
 
@@ -138,10 +138,10 @@ class UserController extends Controller
         ])->first();
 
         if ($user instanceof User){
-            return CustomReponse::success("Usuario obtenido correctamente", ['user' => $user]);
+            return CustomResponse::success("Usuario obtenido correctamente", ['user' => $user]);
         }
 
-        return CustomReponse::error("El usuario no ha sido obtenido correctamente");
+        return CustomResponse::error("El usuario no ha sido obtenido correctamente");
 
 
     }
@@ -169,10 +169,10 @@ class UserController extends Controller
 
             });
 
-            return CustomReponse::success("Administrador actualizados correctamente", $update);
+            return CustomResponse::success("Administrador actualizados correctamente", $update);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('No ha sido posible modificar el administrador');
+            return CustomResponse::error('No ha sido posible modificar el administrador');
         }
 
     }
@@ -195,11 +195,11 @@ class UserController extends Controller
 
             });
 
-            return CustomReponse::success("Usuario desactivado correctamente", $delete);
+            return CustomResponse::success("Usuario desactivado correctamente", $delete);
 
         }catch(\Exception $exception){
 
-            return CustomReponse::error('No ha sido posible crear el administrador');
+            return CustomResponse::error('No ha sido posible crear el administrador');
 
         }
 

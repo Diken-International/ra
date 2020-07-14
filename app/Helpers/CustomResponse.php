@@ -3,7 +3,7 @@
 
 namespace App\Helpers;
 
-class CustomReponse
+class CustomResponse
 {
 
     public static function success($message = "", $data = [], $status = 200){

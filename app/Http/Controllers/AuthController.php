@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -26,7 +26,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return CustomReponse::error("Las credenciales no son correctas");
+            return CustomResponse::error("Las credenciales no son correctas");
         }
 
         return $this->respondWithToken($token);
@@ -39,7 +39,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        return CustomReponse::success(
+        return CustomResponse::success(
             "Usuario obtenido correctamente",
             ['user' => auth()->user()]
         );
@@ -59,7 +59,7 @@ class AuthController extends Controller
     {
         auth()->logout();
 
-        return CustomReponse::success('Sessión finalizada');
+        return CustomResponse::success('Sessión finalizada');
     }
 
     /**
@@ -81,7 +81,7 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-        return CustomReponse::success(
+        return CustomResponse::success(
             'Usuario obtenido correctamente', [
                 'access_token' => $token,
                 'token_type' => 'bearer',

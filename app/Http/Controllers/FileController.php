@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -22,7 +22,7 @@ class FileController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
         $path = Storage::put(
@@ -41,13 +41,13 @@ class FileController extends Controller
             'type' => $type,
         ]);
 
-        return CustomReponse::success("El archivo ha sido subido exitosamente", compact('file'));
+        return CustomResponse::success("El archivo ha sido subido exitosamente", compact('file'));
 
     }
 
     public function show(Request $request, $path){
         if (!Storage::exists($path)){
-            return CustomReponse::error("No se encontro la imagen");
+            return CustomResponse::error("No se encontro la imagen");
         }
 
         if(FileFacade::extension($path) == 'docx'){
@@ -74,11 +74,11 @@ class FileController extends Controller
         $file = File::where('id',  $file_id)->first();
 
         if(!$file instanceof  File){
-            return CustomReponse::error("No se encontro la archivo");
+            return CustomResponse::error("No se encontro la archivo");
         }
 
         if (!Storage::exists($file->path)){
-            return CustomReponse::error("No se encontro la imagen");
+            return CustomResponse::error("No se encontro la imagen");
         }
 
         if (Storage::delete($file->path)){
@@ -86,7 +86,7 @@ class FileController extends Controller
         }
 
 
-        return CustomReponse::success("Imagen eliminada correctamente");
+        return CustomResponse::success("Imagen eliminada correctamente");
 
     }
 }
