@@ -33,7 +33,8 @@ class Services extends Model
         'description',
         'service_start',
         'service_end',
-        'product_id'
+        'product_id',
+        'repairs'
     ];
 
     public function getCostsAttribute($value){
@@ -42,6 +43,14 @@ class Services extends Model
 
     public function setCostsAttribute($value){
         $this->attributes['costs'] =  json_encode($value);
+    }
+
+    public function getRepairsAttribute($value){
+        return json_decode($value);
+    }
+
+    public function setRepairsAttribute($value){
+        $this->attributes['repairs'] =  json_encode($value);
     }
 
     public function client(){

@@ -111,6 +111,21 @@ class ServicesController extends Controller
             return CustomReponse::error("Servicio no encontrado");
         }
 
+        $products_available = (new AvailableHelper)->availableByBranchOffice(Products::class, $request->current_user->branch_office_id);
+
+        $validator = Validator::make($request->all(), [
+            'type' => ['required', Rule::in('preventivo', 'correctivo', 'virtual')],
+            'client_id'  => ['required', new ValidRole('cliente')],
+            'technical_id' => ['required', new ValidRole('tecnico')],
+            'service_start' => 'required|date',
+            'service_end' => 'required|date',
+            'product_id' => ['required', Rule::in($products_available)]
+        ]);
+
+        if ($validator->fails()) {
+            return CustomReponse::error('Error al validar', $validator->errors());
+        }
+
         try{
 
             $service = DB::transaction(function() use($request, $service){
@@ -123,8 +138,9 @@ class ServicesController extends Controller
                     'client_id' => $request->get('client_id', $service->client_id),
                     'technical_id' => $request->get('technical_id', $service->technical_id),
                     'costs' => $request->get('costs', $service->costs),
-                    'progress_status' => $request->get('progress_status'),
-                    'description' => $request->get('description')
+                    'progress_status' => $request->get('progress_status', $service->progress_status),
+                    'description' => $request->get('description', $service->description),
+                    'repairs' => $request->get('repairs', $service->repairs),
                 ]);
 
                 return $service;

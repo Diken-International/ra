@@ -12,7 +12,12 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class PaginatorHelper
 {
 
-    public static function create($data,Request $request){
+    /**
+     * @param $data
+     * @param Request $request
+     * @return array
+     */
+    public static function create($data, Request $request){
 
         $per_page = (!empty($request->get('limit'))) ?  $request->get('limit') : env('PAGINATION_SIZE', 50);
         $page = (!empty($request->get('page'))) ?  $request->get('page') : 1;
@@ -22,7 +27,7 @@ class PaginatorHelper
 
     private static function paginate($data, $per_page, $page){
 
-
+        // Products::where()->paginate(50, '*', 1)
         if ($data instanceof Builder){
             $total = $data->count();
             $data_pagination = $data->paginate($per_page, '*', 'page', $page);
@@ -34,10 +39,14 @@ class PaginatorHelper
             ];
         }
 
+        // Product::all()
         if ($data instanceof Collection || $data instanceof \Illuminate\Support\Collection){
-            $data_pagination = new LengthAwarePaginator($data->forPage($page, $per_page)->values()->all(),
+            $data_pagination = new LengthAwarePaginator(
+                $data->forPage($page, $per_page)->values()->all(),
                 $data->count(),
-                $per_page, $page, []);
+                $per_page,
+                $page,
+                []);
             return [
                 'total' => count($data),
                 'page' => $data_pagination->currentPage(),
