@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 
 use App\Models\Messages;
 use App\Models\Services;
@@ -45,22 +45,22 @@ class MessageController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
         try{
 
         	$messages = DB::transaction(function() use($request){
 
-        		
+
 
         		$service = Services::where([
             		'branch_office_id' => $request->current_user->branch_office_id
         		])->first();
 
-        		
+
         		$message = Messages::create([
-        			
+
         			'message' => $request->get('message'),
         			'author_id'=> $request->current_user->id,
                     'branch_office_id'=> $request->current_user->branch_office_id,
@@ -69,14 +69,14 @@ class MessageController extends Controller
         		]);
 
         		return compact('message');
-        		
+
         	});
 
-        	return CustomReponse::success('Mensaje creado correctamente', $messages);
+        	return CustomResponse::success('Mensaje creado correctamente', $messages);
 
         }catch (\Exception $exception){
 
-        	return CustomReponse::error('El mensaje no se guardo correctamente', $exception->getMessage());
+        	return CustomResponse::error('El mensaje no se guardo correctamente', $exception->getMessage());
 
         }
 
@@ -90,12 +90,12 @@ class MessageController extends Controller
                 return $service->id;
         });
 
-          
-        $author_avilable_to_update = User::where('id',$request->current_user->id)->first();
-        
 
-       
-            
+        $author_avilable_to_update = User::where('id',$request->current_user->id)->first();
+
+
+
+
         $validator = Validator::make($request->all(), [
 
             'message' => 'required',
@@ -107,7 +107,7 @@ class MessageController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
         try{
@@ -115,8 +115,8 @@ class MessageController extends Controller
             $message_to_update = DB::transaction(function() use($request, $services_id, $message_id, $author_avilable_to_update){
 
                 $message = Messages::where('id',$message_id)->first();
-                
-                    
+
+
                 $message->update([
                     'message'    => $request->get('message'),
                     'author_id'  => $author_avilable_to_update->id,
@@ -126,14 +126,14 @@ class MessageController extends Controller
                 ]);
 
                 return compact('message');
-                
-                
+
+
             });
 
-            return CustomReponse::success('Mensaje actualizado correctamente', $message_to_update);
+            return CustomResponse::success('Mensaje actualizado correctamente', $message_to_update);
 
         }catch(\Exception $exception){
-            return CustomReponse::error('El mensaje no se modifico correctamente', $exception->getMessage());
+            return CustomResponse::error('El mensaje no se modifico correctamente', $exception->getMessage());
         }
 
     }
@@ -151,11 +151,11 @@ class MessageController extends Controller
                 return compact('message');
             });
 
-            return CustomReponse::success('Mensaje eliminado correctamente', $message_to_delete);
+            return CustomResponse::success('Mensaje eliminado correctamente', $message_to_delete);
 
         }catch(\Exception $exception){
 
-             return CustomReponse::error('El mensaje no se elimino correctamente');
+             return CustomResponse::error('El mensaje no se elimino correctamente');
 
         }
 

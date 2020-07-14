@@ -2,7 +2,7 @@
 
 namespace App\Exceptions;
 
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
@@ -47,11 +47,11 @@ class Handler extends ExceptionHandler
     public function render($request, Exception $exception)
     {
         if ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-            return CustomReponse::error('Token expirado');
+            return CustomResponse::error('Token expirado');
         } elseif ($exception instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-            return CustomReponse::error('Token invalido');
+            return CustomResponse::error('Token invalido');
         } elseif ($exception instanceof \Tymon\JWTAuth\Exceptions\JWTException) {
-            return CustomReponse::error('El token no ha sido recibido');
+            return CustomResponse::error('El token no ha sido recibido');
         }
 
         return parent::render($request, $exception);

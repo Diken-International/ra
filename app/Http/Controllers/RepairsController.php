@@ -9,7 +9,7 @@ use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 
 
 use App\Models\RepairsParts;
@@ -23,7 +23,7 @@ class RepairsController extends Controller
 
     	$data = PaginatorHelper::create($repairs, $request);
 
-    	return CustomReponse::success("Reparaciones obtenidas", $data);
+    	return CustomResponse::success("Reparaciones obtenidas", $data);
 
     }
 
@@ -45,7 +45,7 @@ class RepairsController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
         try{
@@ -58,11 +58,11 @@ class RepairsController extends Controller
 
         	});
 
-        	return CustomReponse::success('Pieza de Reparacion creada correctamente', $repair_parts);
+        	return CustomResponse::success('Pieza de Reparacion creada correctamente', $repair_parts);
 
         }catch(\Exception $exception){
 
-        	return CustomReponse::error('La reparacion no se guardo correctamente', $exception->getMessage());
+        	return CustomResponse::error('La reparacion no se guardo correctamente', $exception->getMessage());
         }
     }
 
@@ -79,7 +79,7 @@ class RepairsController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return CustomReponse::error('Error al validar', $validator->errors());
+                return CustomResponse::error('Error al validar', $validator->errors());
             }
 
             try{
@@ -94,11 +94,11 @@ class RepairsController extends Controller
 
                 });
 
-                return CustomReponse::success('Reparacion corregida correctamente', $repairs);
+                return CustomResponse::success('Reparacion corregida correctamente', $repairs);
 
             }catch(\Exception $exception){
 
-                return CustomReponse::error('La reparacion no se guardo correctamente', $exception->getMessage());
+                return CustomResponse::error('La reparacion no se guardo correctamente', $exception->getMessage());
             }
 
     }
@@ -107,7 +107,7 @@ class RepairsController extends Controller
 
         $products = ProductRepairParts::all();
 
-        return CustomReponse::success("Productos obtenidos correctamente", ['products' => $products]);
+        return CustomResponse::success("Productos obtenidos correctamente", ['products' => $products]);
 
     }
 
@@ -115,7 +115,7 @@ class RepairsController extends Controller
 
         $categories = CategoryRepairParts::all();
 
-        return CustomReponse::success("Categorías obtenidos correctamente", ['categories' => $categories]);
+        return CustomResponse::success("Categorías obtenidos correctamente", ['categories' => $categories]);
 
     }
 }

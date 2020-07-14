@@ -6,7 +6,7 @@ use App\Helpers\PaginatorHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use App\Helpers\CustomReponse;
+use App\Helpers\CustomResponse;
 
 /* Models */
 use App\Models\Products;
@@ -20,7 +20,7 @@ class ProductsController extends Controller
 
     	$data = PaginatorHelper::create($products, $request);
 
-    	return CustomReponse::success("Productos obtenidos correctamente", $data);
+    	return CustomResponse::success("Productos obtenidos correctamente", $data);
 
     }
 
@@ -43,7 +43,7 @@ class ProductsController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
 
         try{
@@ -56,12 +56,12 @@ class ProductsController extends Controller
 
         	});
 
-        	return CustomReponse::success('Producto creado correctamente', $products);
+        	return CustomResponse::success('Producto creado correctamente', $products);
 
         }catch(\Exception $exception){
 
 
-        	return CustomReponse::error('El producto no se guardo correctamente', $exception->getMessage());
+        	return CustomResponse::error('El producto no se guardo correctamente', $exception->getMessage());
         }
 
     }
@@ -85,7 +85,7 @@ class ProductsController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return CustomReponse::error('Error al validar', $validator->errors());
+            return CustomResponse::error('Error al validar', $validator->errors());
         }
         try{
 
@@ -98,11 +98,11 @@ class ProductsController extends Controller
         		return compact('product');
         	});
 
-        	return CustomReponse::success('Producto modificado correctamente', $products);
+        	return CustomResponse::success('Producto modificado correctamente', $products);
 
         }catch(\Exception $exception){
 
-        	return CustomReponse::error('El producto no se guardo correctamente', $exception->getMessage());
+        	return CustomResponse::error('El producto no se guardo correctamente', $exception->getMessage());
 
         }
 
@@ -121,11 +121,11 @@ class ProductsController extends Controller
         		return compact('product');
         	});
 
-        	return CustomReponse::success('Producto desactivado correctamente', $products_to_delete);
+        	return CustomResponse::success('Producto desactivado correctamente', $products_to_delete);
 
     	}catch(\Exception $exception){
 
-    		return CustomReponse::error('El producto no se desactivo correctamente', $exception->getMessage());
+    		return CustomResponse::error('El producto no se desactivo correctamente', $exception->getMessage());
     	}
 
     }
