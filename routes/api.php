@@ -26,13 +26,17 @@ Route::group(['middleware' => ['jwt']], function () {
 
     Route::get('users','UserController@index')->name('users.index');
     Route::post('users','UserController@store')->name('users.store');
-    Route::patch('users/{user_id}', 'UserController@update')->name('users.update');
+    Route::put('users/{user_id}', 'UserController@update')->name('users.update');
     Route::delete('users/{user_id}','UserController@destroy')->name('users.destroy');
     Route::get('users/{user_id}','UserController@show')->name('users.show');
     Route::post('users/admin', 'UserController@createAdmin')->name('users.create.admin');
     Route::get('users/me','UserController@me')->name('users.me');
 
     Route::get('clients','ClientController@index')->name('clients.index');
+    Route::put('clients/{user_id}','ClientController@update')->name('clients.update');
+    Route::get('clients/{user_id}','ClientController@show')->name('clients.show');
+    Route::post('clients/{user_id}/products','ClientController@addProduct')->name('clients.add.products');
+    Route::get('clients/{user_id}/products','ClientController@listProduct')->name('clients.list.products');
 
     Route::get('services','ServicesController@index')->name('services.index');
     Route::post('services','ServicesController@store')->name('servies.store');

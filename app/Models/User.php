@@ -36,7 +36,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token', 'email_verified_at'
     ];
 
     // Rest omitted for brevity
@@ -61,7 +61,15 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
+    public function setPasswordAttribute($value){
+        $this->attributes['password'] = bcrypt($value);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function messages(){
         return $this->hasMany(Messages::class);
     }
+
 }
