@@ -41,7 +41,7 @@ class UserController extends Controller
                     'name' => $request->get('name'),
                     'last_name' => $request->get('last_name'),
                     'email' => $request->get('email'),
-                    'password' => bcrypt($request->get('password')),
+                    'password' => $request->get('password'),
                     'role' => 'admin',
                     'branch_office_id' => $branch_office->id
                 ]);
@@ -77,7 +77,7 @@ class UserController extends Controller
                         'last_name'         => $request->get('last_name'),
                         'second_last_name'  => $request->get('second_last_name'),
                         'email'             => $request->get('email'),
-                        'password'          => bcrypt($request->get('password')),
+                        'password'          => $request->get('password'),
                         'role'              => $request->get('role'),
                         'branch_office_id'  => $request->current_user->branch_office_id
                 ]);

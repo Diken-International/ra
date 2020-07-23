@@ -16,7 +16,7 @@ class UsersTableSeeder extends Seeder
 
         User::create([
             'email' => 'admin@admin.com',
-            'password' => Hash::make('admin'),
+            'password' => 'admin',
             'name' => 'Administrator',
             'role' => 'admin',
             'branch_office_id' => $branch_office->id
@@ -27,7 +27,7 @@ class UsersTableSeeder extends Seeder
         for ($i=0; $i<= 450; $i++){
             User::create([
                 'email' => $faker->email,
-                'password' => Hash::make('test'),
+                'password' => 'test',
                 'name' => $faker->name,
                 'last_name' => $faker->lastName,
                 'role' => \Illuminate\Support\Arr::random(['admin', 'tecnico', 'asesor', 'cliente']),
