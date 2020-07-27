@@ -30,10 +30,11 @@ class AddExtraFieldsInTables extends Migration
             $table->integer('product_id')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->boolean('status')->default(true);
-            $table->string('type_product')->default('own'); // own, borrowed
+            $table->string('product_type')->default('own'); // own, borrowed
             $table->integer('period_service')->default(30);
             $table->date('next_service')->default(\Carbon\Carbon::now()->addDay(30));
             $table->date('last_service')->default(\Carbon\Carbon::now());
+            $table->string('serial_number');
             $table->foreign('product_id')->references('id')->on('products');
             $table->foreign('user_id')->references('id')->on('users');
             $table->timestamps();

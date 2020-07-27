@@ -15,7 +15,7 @@ class ProductAddRequest extends ApiRequest
         return [
             'product_id' => ['required', Rule::in((new AvailableHelper())->availableAllEntities(Products::class))],
             'status' => 'required',
-            'type_product' => ['required', Rule::in((new AvailableHelper())->availableTypeProducts())]
+            'product_type' => ['required', Rule::in((new AvailableHelper())->availableTypeProducts())]
         ];
     }
 }

@@ -11,6 +11,7 @@ use App\Models\Client;
 use App\Models\ProductUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Ramsey\Uuid\Uuid;
 
 class ClientController extends Controller
 {
@@ -79,7 +80,8 @@ class ClientController extends Controller
             $product_user = ProductUser::create([
                 'product_id'    => $request->get('product_id'),
                 'user_id'       => $user_id,
-                'type_product'  => $request->get('type_product'),
+                'serial_number' => Uuid::uuid1(),
+                'product_type'  => $request->get('product_type'),
                 'status'        => true,
             ]);
 
@@ -101,6 +103,13 @@ class ClientController extends Controller
 
         return CustomResponse::success("Data encontrada correctamente", $data );
 
+    }
+
+    public function detailProduct(Request $request, $user_id, $product_id){
+
+        $product_user = ModelHelper::findEntity(ProductUser::class, $product_id, ['user_id' => $user_id]);
+
+        return CustomResponse::success("Detalle obtenido correctamente", ['product_user' => $product_user]);
     }
 
 }
