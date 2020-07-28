@@ -4,12 +4,10 @@ namespace App\Models;
 
 use App\Traits\FilesModel;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ProductUser extends Model
 {
     use FilesModel;
-    use SoftDeletes;
 
     protected $table = 'product_user';
 
