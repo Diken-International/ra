@@ -9,6 +9,7 @@ use App\Http\Requests\Client\ProductAddRequest;
 use App\Http\Requests\User\UserRequest;
 use App\Models\Client;
 use App\Models\ProductUser;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Ramsey\Uuid\Uuid;
@@ -78,11 +79,14 @@ class ClientController extends Controller
         try{
 
             $product_user = ProductUser::create([
-                'product_id'    => $request->get('product_id'),
-                'user_id'       => $user_id,
-                'serial_number' => Uuid::uuid1(),
-                'product_type'  => $request->get('product_type'),
-                'status'        => true,
+                'product_id'        => $request->get('product_id'),
+                'user_id'           => $user_id,
+                'serial_number'     => Uuid::uuid1(),
+                'product_type'      => $request->get('product_type'),
+                'status'            => true,
+                'period_service'    => 30,
+                'next_service'      => Carbon::now()->addDay(30),
+                'last_service'      => Carbon::now()
             ]);
 
             return CustomResponse::success('Producto agregado correctamente', ['user_product' => $product_user]);

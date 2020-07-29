@@ -12,11 +12,14 @@ class ProductUser extends Model
     protected $table = 'product_user';
 
     protected $fillable = [
-      'user_id',
-      'product_id',
-      'status',
-      'product_type',
-      'serial_number'
+        'user_id',
+        'product_id',
+        'status',
+        'product_type',
+        'serial_number',
+        'period_service',
+        'next_service',
+        'last_service'
     ];
 
     protected $appends = [

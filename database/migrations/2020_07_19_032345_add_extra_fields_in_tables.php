@@ -13,11 +13,6 @@ class AddExtraFieldsInTables extends Migration
      */
     public function up()
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->dropForeign(['product_id']);
-            $table->dropColumn(['product_id']);
-        });
-
         Schema::create('product_service', function (Blueprint $table){
            $table->integer('product_id')->unsigned();
            $table->integer('service_id')->unsigned();

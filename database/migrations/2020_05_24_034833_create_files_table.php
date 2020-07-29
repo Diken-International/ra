@@ -18,6 +18,8 @@ class CreateFilesTable extends Migration
             $table->string('model');
             $table->integer('model_id');
             $table->string('path');
+            $table->string('category')->default('');
+            $table->string('type')->default('default');
             $table->timestamps();
         });
     }

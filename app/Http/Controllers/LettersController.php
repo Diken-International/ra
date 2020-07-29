@@ -25,7 +25,7 @@ class LettersController extends Controller
         $services = $request->get('services');
         $functionality = $this->translate($request->get('functionality'));
         $foam = $this->translate($request->get('foam'));
-	    $pdf = PDF::loadView('example', [
+	    $pdf = PDF::loadView('formats.reception', [
 	        'product_user' => $product_user,
             'services' => $services,
             'functionality' => $functionality,
@@ -35,10 +35,10 @@ class LettersController extends Controller
         return base64_encode($pdf->output());
 	}
 
-    public function receptionGet(ReceptionRequest $request){
+    public function warranty(Request $request){
 
-        $pdf = PDF::loadView('example');
+        $pdf = PDF::loadView('formats.warranty');
 
-        return $pdf->download('invoice.pdf');
+        return base64_encode($pdf->output());
     }
 }

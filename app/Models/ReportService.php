@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class ReportService extends Model
+{
+    protected $fillable = [
+        'service_id',
+        'product_user_id',
+        'costs',
+        'subtotal',
+        'total',
+        'progress',
+        'description',
+        'service_end',
+        'service_start'
+    ];
+
+    protected $appends = [
+        'product_user'
+    ];
+
+    public function getProductUserAttribute($value){
+        return $this->productUser()->select([
+            'id',
+            'product_id',
+            'user_id'
+        ])->first();
+    }
+
+    public function productUser(){
+        return $this->hasOne(ProductUser::class, 'id', 'product_user_id');
+    }
+
+    public function getCostsAttribute($value){
+        return json_decode($value);
+    }
+
+    public function setCostsAttribute($value){
+        $this->attributes['costs'] =  json_encode($value);
+    }
+}

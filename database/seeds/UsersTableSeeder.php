@@ -22,9 +22,25 @@ class UsersTableSeeder extends Seeder
             'branch_office_id' => $branch_office->id
         ]);
 
+        User::create([
+            'email' => 'cliente@cliente.com',
+            'password' => 'cliente',
+            'name' => 'cliente',
+            'role' => 'cliente',
+            'branch_office_id' => $branch_office->id
+        ]);
+
+        User::create([
+            'email' => 'tecnico@tecnico.com',
+            'password' => 'tecnico',
+            'name' => 'tecnico',
+            'role' => 'tecnico',
+            'branch_office_id' => $branch_office->id
+        ]);
+
         $faker = \Faker\Factory::create();
 
-        for ($i=0; $i<= 450; $i++){
+        for ($i=0; $i<= 50; $i++){
             User::create([
                 'email' => $faker->email,
                 'password' => 'test',

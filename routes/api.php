@@ -14,8 +14,8 @@ Route::get('files/{path}', 'FileController@show')
     ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
     ->name('files.show');
 
-Route::get('download/file/reception', function (){
-    return view('example');
+Route::get('download/file/warranty', function (){
+    return view('formats.warranty');
 });
 
 /**
@@ -71,4 +71,5 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::delete('products/{product_id}','ProductsController@destroy')->name('service.message.destroy');
 
     Route::post('download/file/reception', 'LettersController@reception')->name('download.reception');
+    Route::post('download/file/warranty', 'LettersController@warranty')->name('download.warranty');
 });
