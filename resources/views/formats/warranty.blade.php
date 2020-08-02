@@ -1,7 +1,10 @@
 <html>
     <head>
-        <title>Example</title>
-        <link rel="stylesheet" href="{{ asset('css/tychions.css') }}">
+        <title>Carta de garantia</title>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css"
+              integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w=="
+              crossorigin="anonymous" />
         <style>
             h2{
               margin-top: 0px;
@@ -18,7 +21,7 @@
           <p class="blue">DATOS PARA SER LLENADOS POR EL DISTRIBUIDOR.</p>
           <div class="pv2">
               <div class="dib w-40 b">Nombre del equipo:</div>
-              <div class="dib w-50">{{ isset($product_user->product->name) ? $product_user->product->name : 'Nombre del equipo' }}</div>
+              <div class="dib w-50 bb"></div>
           </div>
           <div class="pv2">
               <div class="dib w-40 b">Nombre del distribuidor:</div>

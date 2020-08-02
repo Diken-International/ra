@@ -19,7 +19,8 @@ class Services extends Model
     protected $fillable = [
         'client_id',
         'technical_id',
-        'branch_office_id'
+        'branch_office_id',
+        'tentative_date'
     ];
 
     public function getReportsAttribute($value){

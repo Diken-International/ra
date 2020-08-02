@@ -1,7 +1,10 @@
 <html>
     <head>
-        <title>Example</title>
-        <link rel="stylesheet" href="{{ asset('css/tychions.css') }}">
+        <title>Carta de recepción</title>
+        <link rel="stylesheet"
+              href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css"
+              integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w=="
+              crossorigin="anonymous" />
         <style>
             h2{
               margin-top: 0px;

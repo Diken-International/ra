@@ -17,6 +17,7 @@ class CreateServiceTable extends Migration
             $table->increments('id');
             $table->integer('client_id');
             $table->integer('technical_id');
+            $table->dateTime('tentative_date');
             $table->integer('branch_office_id');
             $table->foreign('branch_office_id')->references('id')->on('branch_offices');
             $table->timestamps();

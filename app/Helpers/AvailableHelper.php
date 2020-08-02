@@ -11,7 +11,7 @@ class AvailableHelper
 
     private static $available_type_products = [
         'own'       => "Propio",
-        'borrowed'  => "Prestado"
+        'borrowed'  => "Comodato"
     ];
 
     public function availableTypeProducts(){

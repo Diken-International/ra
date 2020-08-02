@@ -18,10 +18,15 @@ class CreateReportServicesTable extends Migration
             $table->integer('service_id')->unsigned();
             $table->integer('product_user_id')->unsigned();
             $table->json('costs')->default("[]");
+            $table->json('costs_repairs')->default("[]");
             $table->float('subtotal')->nullable();
             $table->float('total')->nullable();
             $table->integer('progress')->default(0);
             $table->string('description')->nullable();
+            $table->string('status')->default('pendiente');
+            $table->string('dilution')->nullable();
+            $table->string('frequency')->nullable();
+            $table->string('method')->nullable();
             $table->date('service_end')->nullable();
             $table->date('service_start');
             $table->foreign('service_id')->references('id')->on('services');

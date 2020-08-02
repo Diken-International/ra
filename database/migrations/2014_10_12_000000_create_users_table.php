@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->string('last_name')->after('id')->nullable();
             $table->string('second_last_name')->after('id')->nullable();
+            $table->json('activities')->default("[]");
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

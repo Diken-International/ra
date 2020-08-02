@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\AvailableHelper;
+use App\Helpers\ModelHelper;
 use App\Models\Products;
 use App\Models\ReportService;
 use App\Rules\ValidRole;
@@ -34,6 +35,7 @@ class ServicesController extends Controller
     	$validator = Validator::make($request->all(), [
             'client_id'  => ['required', new ValidRole('cliente')],
             'technical_id' => ['required', new ValidRole('tecnico')],
+            'tentative_date' => ['required', 'date'],
             'product_user_ids' => 'required|array'
         ]);
 
@@ -47,6 +49,7 @@ class ServicesController extends Controller
             	$service = Services::create([
                     'client_id' => $request->get('client_id'),
                     'technical_id' => $request->get('technical_id'),
+                    'tentative_date' => $request->get('tentative_date'),
                     'branch_office_id' => $request->current_user->branch_office_id
                  ]);
 
@@ -91,16 +94,7 @@ class ServicesController extends Controller
 
     public function update(Request $request, $id){
 
-        $service = Services::where([
-            'id' => $id,
-            'branch_office_id' => $request->current_user->branch_office_id
-        ])->first();
-
-        if (!$service instanceof Services){
-            return CustomResponse::error("Servicio no encontrado");
-        }
-
-        $products_available = (new AvailableHelper)->availableByBranchOffice(Products::class, $request->current_user->branch_office_id);
+        $service = ModelHelper::findEntity(Services::class, $id, ['branch_office_id' => $request->current_user->branch_office_id]);
 
         $validator = Validator::make($request->all(), [
             'client_id'  => ['required', new ValidRole('cliente')],
@@ -117,7 +111,8 @@ class ServicesController extends Controller
 
                 $service->update([
                     'client_id' => $request->get('client_id', $service->client_id),
-                    'technical_id' => $request->get('technical_id', $service->technical_id)
+                    'technical_id' => $request->get('technical_id', $service->technical_id),
+                    'tentative_date' => $request->get('tentative_date')
                 ]);
 
                 return $service;
@@ -145,6 +140,35 @@ class ServicesController extends Controller
 
             return CustomResponse::error('No ha sido posible crear el servicio');
 
+        }
+
+    }
+
+    public function reportShow(Request $request, $service_id, $report_id){
+
+        $report = ModelHelper::findEntity(ReportService::class, $report_id);
+
+        return CustomResponse::success("Reporte obetenido correctamente", ['report' => $report]);
+
+    }
+
+    public function reportUpdate(Request $request, $service_id, $report_id){
+
+        $report = ModelHelper::findEntity(ReportService::class, $report_id);
+
+        try{
+            DB::transaction(function () use ($report, $request){
+                $report->update($request->all());
+                $report->progress = ($request->get('status') == 'terminado') ? 100 : 50;
+                $report->save();
+            });
+
+            return CustomResponse::success(
+                "Reporte actualizado correctamente",
+                ['report' => $report]
+            );
+        }catch(\Exception $exception){
+            return CustomResponse::error("No fue posible actualizar el reporte", $exception->getMessage());
         }
 
     }

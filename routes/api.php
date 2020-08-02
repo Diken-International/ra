@@ -44,10 +44,13 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::get('clients/{user_id}/product-relation/{product_id}','ClientController@detailProduct')->name('clients.detail.products');
 
     Route::get('services','ServicesController@index')->name('services.index');
-    Route::post('services','ServicesController@store')->name('servies.store');
-    Route::get('services/{service_id}','ServicesController@show')->name('servies.show');
-    Route::put('services/{service_id}','ServicesController@update')->name('servies.update');
-    Route::delete('services/{service_id}','ServicesController@destroy')->name('servies.destroy');
+    Route::post('services','ServicesController@store')->name('services.store');
+    Route::get('services/{service_id}','ServicesController@show')->name('services.show');
+    Route::patch('services/{service_id}','ServicesController@update')->name('services.update');
+    Route::delete('services/{service_id}','ServicesController@destroy')->name('services.destroy');
+
+    Route::get('services/{service_id}/reports/{report_id}','ServicesController@reportShow')->name('services.report.show');
+    Route::patch('services/{service_id}/reports/{report_id}','ServicesController@reportUpdate')->name('services.report.update');
 
     Route::get('services/{service_id}/messages','MessageController@index')->name('service.message.index');
     Route::post('services/{service_id}/messages','MessageController@store')->name('service.message.store');

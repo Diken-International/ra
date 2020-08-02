@@ -16,10 +16,9 @@ use App\Models\RepairsParts;
 
 class RepairsController extends Controller
 {
-    //
     public function index(Request $request){
 
-    	$repairs = RepairsParts::with(['category', 'product'])->get();
+    	$repairs = RepairsParts::with(['category', 'product'])->orderBy($request->get('order_by'))->get();
 
     	$data = PaginatorHelper::create($repairs, $request);
 
@@ -30,8 +29,6 @@ class RepairsController extends Controller
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
-
-
             'code' => 'required',
             'parts_num' => 'required',
             'number_diken' => 'required',

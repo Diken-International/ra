@@ -10,12 +10,17 @@ class ReportService extends Model
         'service_id',
         'product_user_id',
         'costs',
+        'costs_repairs',
         'subtotal',
         'total',
         'progress',
         'description',
         'service_end',
-        'service_start'
+        'service_start',
+        'status',
+        'dilution',
+        'frequency',
+        'method'
     ];
 
     protected $appends = [
@@ -26,7 +31,8 @@ class ReportService extends Model
         return $this->productUser()->select([
             'id',
             'product_id',
-            'user_id'
+            'user_id',
+            'serial_number'
         ])->first();
     }
 
@@ -40,5 +46,13 @@ class ReportService extends Model
 
     public function setCostsAttribute($value){
         $this->attributes['costs'] =  json_encode($value);
+    }
+
+    public function getCostsRepairsAttribute($value){
+        return json_decode($value);
+    }
+
+    public function setCostsRepairsAttribute($value){
+        $this->attributes['costs_repairs'] =  json_encode($value);
     }
 }
