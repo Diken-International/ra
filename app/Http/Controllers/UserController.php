@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\Api\EntityNotFoundException;
 use App\Helpers\CustomResponse;
+use App\Helpers\ModelHelper;
 use App\Helpers\PaginatorHelper;
 use App\Helpers\RoleHelper;
+use App\Http\Requests\User\UserRequest;
 use App\Models\BranchOffice;
 use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -37,7 +41,7 @@ class UserController extends Controller
                     'name' => $request->get('name'),
                     'last_name' => $request->get('last_name'),
                     'email' => $request->get('email'),
-                    'password' => bcrypt($request->get('password')),
+                    'password' => $request->get('password'),
                     'role' => 'admin',
                     'branch_office_id' => $branch_office->id
                 ]);
@@ -57,19 +61,11 @@ class UserController extends Controller
 
     }
 
-    public function store(Request $request){
-
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'last_name' => 'required',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|string',
-            'role'    => ['required', Rule::in(RoleHelper::$available_roles)]
-        ]);
-
-        if ($validator->fails()) {
-            return CustomResponse::error('Error al validar', $validator->errors());
-        }
+    /**
+     * @param UserRequest $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+     */
+    public function store(UserRequest $request){
 
         try{
 
@@ -77,13 +73,13 @@ class UserController extends Controller
 
 
                 $user = User::create([
-                        'name' => $request->get('name'),
-                        'last_name' => $request->get('last_name'),
-                        'second_last_name' => $request->get('second_last_name'),
-                        'email' => $request->get('email'),
-                        'password' => bcrypt($request->get('password')),
-                        'role' => $request->get('role'),
-                        'branch_office_id' => $request->current_user->branch_office_id
+                        'name'              => $request->get('name'),
+                        'last_name'         => $request->get('last_name'),
+                        'second_last_name'  => $request->get('second_last_name'),
+                        'email'             => $request->get('email'),
+                        'password'          => $request->get('password'),
+                        'role'              => $request->get('role'),
+                        'branch_office_id'  => $request->current_user->branch_office_id
                 ]);
 
                 return compact('user');
@@ -98,6 +94,9 @@ class UserController extends Controller
         }
     }
 
+    /**
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+     */
     public function me()
     {
         return CustomResponse::success(
@@ -106,6 +105,10 @@ class UserController extends Controller
         );
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
 
@@ -129,69 +132,73 @@ class UserController extends Controller
 
     }
 
+    /**
+     * @param Request $request
+     * @param $user_id
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+     * @throws EntityNotFoundException
+     */
     public function show(Request $request, $user_id){
 
+        $user = ModelHelper::findEntity(
+            User::class,
+            $user_id,
+            ['branch_office_id' => $request->current_user->branch_office_id]
+        );
 
-        $user = User::where([
-            'id' => $user_id,
-            'branch_office_id' => $request->current_user->branch_office_id
-        ])->first();
-
-        if ($user instanceof User){
-            return CustomResponse::success("Usuario obtenido correctamente", ['user' => $user]);
-        }
-
-        return CustomResponse::error("El usuario no ha sido obtenido correctamente");
-
+        return CustomResponse::success("Usuario obtenido correctamente", ['user' => $user]);
 
     }
 
-    public function update(Request $request, $id){
+    /**
+     * @param UserRequest $request
+     * @param $id
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+     * @throws EntityNotFoundException
+     */
+    public function update(UserRequest $request, $id){
+
+        $user = ModelHelper::findEntity(User::class, $id);
 
         try{
 
-            $update = DB::transaction(function() use($request, $id){
-                //dd(  );
-
-
-
-                $user = User::where('id',$id)->first();
-
+            $user_updated = DB::transaction(function() use($request, $user){
 
                 $user->update($request->all());
-
-                if (!empty($request->get('password'))){
-                    $user->password = bcrypt($request->get('password'));
-                    $user->save();
-                }
-
                 return compact('user');
 
             });
 
-            return CustomResponse::success("Administrador actualizados correctamente", $update);
+            return CustomResponse::success("Usuario actualizado correctamente", $user_updated);
 
         }catch(\Exception $exception){
-            return CustomResponse::error('No ha sido posible modificar el administrador');
+            return CustomResponse::error('No ha sido posible modificar el usuario', $exception->getMessage());
         }
 
     }
 
+    /**
+     * @param Request $request
+     * @param $id
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Foundation\Application|\Illuminate\Http\Response
+     * @throws EntityNotFoundException
+     */
     public function destroy(Request $request, $id){
+
+        $user = ModelHelper::findEntity(User::class, $id);
 
         try{
 
-            $delete = DB::transaction(function() use($id){
+            $delete = DB::transaction(function() use($user){
 
+                $user_used_to_delete = auth()->user()->role;
 
-                $user = auth()->user()->role;
+                if($user_used_to_delete == 'Super_Admin' || $user_used_to_delete == 'admin'){
 
-                if($user == 'Super_Admin' || $user == 'admin'){
-
-                    $user = User::findOrFail($id)->delete();
-
+                    $user->delete();
                 }
-                    return compact('user');
+
+                return compact('user');
 
             });
 

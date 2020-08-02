@@ -14,6 +14,10 @@ Route::get('files/{path}', 'FileController@show')
     ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
     ->name('files.show');
 
+Route::get('download/file/warranty', function (){
+    return view('formats.warranty');
+});
+
 /**
  * POST    /modelo/            -> store
  * GET     /modelo/            -> index
@@ -26,19 +30,27 @@ Route::group(['middleware' => ['jwt']], function () {
 
     Route::get('users','UserController@index')->name('users.index');
     Route::post('users','UserController@store')->name('users.store');
-    Route::patch('users/{user_id}', 'UserController@update')->name('users.update');
+    Route::put('users/{user_id}', 'UserController@update')->name('users.update');
     Route::delete('users/{user_id}','UserController@destroy')->name('users.destroy');
     Route::get('users/{user_id}','UserController@show')->name('users.show');
     Route::post('users/admin', 'UserController@createAdmin')->name('users.create.admin');
     Route::get('users/me','UserController@me')->name('users.me');
 
     Route::get('clients','ClientController@index')->name('clients.index');
+    Route::patch('clients/{user_id}','ClientController@update')->name('clients.update');
+    Route::get('clients/{user_id}','ClientController@show')->name('clients.show');
+    Route::post('clients/{user_id}/product-relation','ClientController@addProduct')->name('clients.add.products');
+    Route::get('clients/{user_id}/product-relation','ClientController@listProduct')->name('clients.list.products');
+    Route::get('clients/{user_id}/product-relation/{product_id}','ClientController@detailProduct')->name('clients.detail.products');
 
     Route::get('services','ServicesController@index')->name('services.index');
-    Route::post('services','ServicesController@store')->name('servies.store');
-    Route::get('services/{service_id}','ServicesController@show')->name('servies.show');
-    Route::put('services/{service_id}','ServicesController@update')->name('servies.update');
-    Route::delete('services/{service_id}','ServicesController@destroy')->name('servies.destroy');
+    Route::post('services','ServicesController@store')->name('services.store');
+    Route::get('services/{service_id}','ServicesController@show')->name('services.show');
+    Route::patch('services/{service_id}','ServicesController@update')->name('services.update');
+    Route::delete('services/{service_id}','ServicesController@destroy')->name('services.destroy');
+
+    Route::get('services/{service_id}/reports/{report_id}','ServicesController@reportShow')->name('services.report.show');
+    Route::patch('services/{service_id}/reports/{report_id}','ServicesController@reportUpdate')->name('services.report.update');
 
     Route::get('services/{service_id}/messages','MessageController@index')->name('service.message.index');
     Route::post('services/{service_id}/messages','MessageController@store')->name('service.message.store');
@@ -60,4 +72,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('products','ProductsController@store')->name('products.store');
     Route::put('products/{product_id}','ProductsController@update')->name('products.update');
     Route::delete('products/{product_id}','ProductsController@destroy')->name('service.message.destroy');
+
+    Route::post('download/file/reception', 'LettersController@reception')->name('download.reception');
+    Route::post('download/file/warranty', 'LettersController@warranty')->name('download.warranty');
 });

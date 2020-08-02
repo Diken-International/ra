@@ -15,14 +15,13 @@ class CreateServiceTable extends Migration
     {
         Schema::create('services', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->nullable();
-            $table->string('type');
-            $table->json('costs')->nullable();
-            $table->float('extra_cost', 10, 2)->nullable();
-            $table->float('total_cost', 10, 2)->nullable();
             $table->integer('client_id');
             $table->integer('technical_id');
+            $table->dateTime('tentative_date');
+            $table->integer('branch_office_id');
+            $table->foreign('branch_office_id')->references('id')->on('branch_offices');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

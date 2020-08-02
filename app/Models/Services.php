@@ -12,30 +12,20 @@ class Services extends Model
     protected $table = 'services';
 
     protected $appends = [
-        'model'
+        'model',
+        'reports'
     ];
 
     protected $fillable = [
-        'name',
-        'type',
-        'costs',
-        'extra_cost',
-        'total_cost',
         'client_id',
         'technical_id',
         'branch_office_id',
-        'address',
-        'postal_code',
-        'state',
-        'municipality',
-        'contact_phone',
-        'progress_status',
-        'description',
-        'service_start',
-        'service_end',
-        'product_id',
-        'repairs'
+        'tentative_date'
     ];
+
+    public function getReportsAttribute($value){
+        return $this->reportServices()->get();
+    }
 
     public function getCostsAttribute($value){
         return json_decode($value);
@@ -51,6 +41,10 @@ class Services extends Model
 
     public function setRepairsAttribute($value){
         $this->attributes['repairs'] =  json_encode($value);
+    }
+
+    public function reportServices(){
+        return $this->hasMany(ReportService::class, 'service_id', 'id');
     }
 
     public function client(){
