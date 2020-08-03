@@ -12,7 +12,7 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $branch_office = BranchOffice::create(['name' => 'Sucursal Test']);
+        $branch_office = BranchOffice::create(['name' => 'Sucursal Celaya']);
 
         User::create([
             'email' => 'admin@admin.com',
@@ -22,6 +22,7 @@ class UsersTableSeeder extends Seeder
             'branch_office_id' => $branch_office->id
         ]);
 
+        /*
         User::create([
             'email' => 'cliente@cliente.com',
             'password' => 'cliente',
@@ -38,6 +39,7 @@ class UsersTableSeeder extends Seeder
             'branch_office_id' => $branch_office->id
         ]);
 
+
         $faker = \Faker\Factory::create();
 
         for ($i=0; $i<= 50; $i++){
@@ -50,5 +52,6 @@ class UsersTableSeeder extends Seeder
                 'branch_office_id' => $branch_office->id
             ]);
         }
+        */
     }
 }
