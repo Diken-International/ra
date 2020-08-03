@@ -18,7 +18,9 @@ class RepairsController extends Controller
 {
     public function index(Request $request){
 
-    	$repairs = RepairsParts::with(['category', 'product'])->orderBy($request->get('order_by'))->get();
+    	$repairs = RepairsParts::with(['category', 'product'])
+            ->orderBy($request->get('order_by', 'id'))
+            ->get();
 
     	$data = PaginatorHelper::create($repairs, $request);
 
