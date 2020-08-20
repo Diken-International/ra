@@ -75,4 +75,7 @@ Route::group(['middleware' => ['jwt']], function () {
 
     Route::post('download/file/reception', 'LettersController@reception')->name('download.reception');
     Route::post('download/file/warranty', 'LettersController@warranty')->name('download.warranty');
+
+    Route::get('todo','TodoController@index')->name('todo.index');
+    Route::post('todo','TodoController@store')->name('todo.store');
 });
