@@ -29,7 +29,7 @@ class ClientController extends Controller
             $users->where('name', 'iLIKE', '%'.$request->get('search').'%');
         }
 
-        $users = $users->get();
+        $users = $users->orderBy('id')->get();
 
         $data = PaginatorHelper::create($users, $request);
 
@@ -101,7 +101,7 @@ class ClientController extends Controller
 
     public function listProduct(Request $request, $user_id){
 
-        $collect_product_user = ProductUser::where('user_id', $user_id)->get();
+        $collect_product_user = ProductUser::where('user_id', $user_id)->orderBy('next_service', 'asc')->get();
 
         $data = PaginatorHelper::create($collect_product_user, $request);
 

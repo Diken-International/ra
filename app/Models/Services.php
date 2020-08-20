@@ -20,7 +20,10 @@ class Services extends Model
         'client_id',
         'technical_id',
         'branch_office_id',
-        'tentative_date'
+        'tentative_date',
+        'type',
+        'kms',
+        'activity'
     ];
 
     public function getReportsAttribute($value){
