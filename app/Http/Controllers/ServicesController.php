@@ -33,10 +33,13 @@ class ServicesController extends Controller
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
-            'client_id'  => ['required', new ValidRole('cliente')],
-            'technical_id' => ['required', new ValidRole('tecnico')],
-            'tentative_date' => ['required', 'date'],
-            'product_user_ids' => 'required|array'
+            'client_id'         => ['required', new ValidRole('cliente')],
+            'technical_id'      => ['required', new ValidRole('tecnico')],
+            'type'              => ['required', Rule::in(['face-to-face',  'remote'])],
+            'activity'          => ['required', Rule::in(['preventive',  'corrective'])],
+            'kms'               => ['numeric'],
+            'tentative_date'    => ['required', 'date'],
+            'product_user_ids'  => 'required|array'
         ]);
 
         if ($validator->fails()) {
@@ -47,10 +50,13 @@ class ServicesController extends Controller
             $result = DB::transaction(function () use($request){
 
             	$service = Services::create([
-                    'client_id' => $request->get('client_id'),
-                    'technical_id' => $request->get('technical_id'),
-                    'tentative_date' => $request->get('tentative_date'),
-                    'branch_office_id' => $request->current_user->branch_office_id
+                    'client_id'         => $request->get('client_id'),
+                    'technical_id'      => $request->get('technical_id'),
+                    'tentative_date'    => $request->get('tentative_date'),
+                    'type'              => $request->get('type'),
+                    'kms'               => $request->get('kms'),
+                    'activity'          => $request->get('activity'),
+                    'branch_office_id'  => $request->current_user->branch_office_id
                  ]);
 
                 foreach ($request->get('product_user_ids') as $product_id){
@@ -97,8 +103,12 @@ class ServicesController extends Controller
         $service = ModelHelper::findEntity(Services::class, $id, ['branch_office_id' => $request->current_user->branch_office_id]);
 
         $validator = Validator::make($request->all(), [
-            'client_id'  => ['required', new ValidRole('cliente')],
-            'technical_id' => ['required', new ValidRole('tecnico')]
+            'client_id'         => ['required', new ValidRole('cliente')],
+            'technical_id'      => ['required', new ValidRole('tecnico')],
+            'tentative_date'    => ['date'],
+            'type'              => ['required', Rule::in(['face-to-face',  'remote'])],
+            'activity'          => ['required', Rule::in(['preventive',  'corrective'])],
+            'kms'               => ['numeric']
         ]);
 
         if ($validator->fails()) {
@@ -112,7 +122,10 @@ class ServicesController extends Controller
                 $service->update([
                     'client_id' => $request->get('client_id', $service->client_id),
                     'technical_id' => $request->get('technical_id', $service->technical_id),
-                    'tentative_date' => $request->get('tentative_date')
+                    'type' => $request->get('type', $service->type),
+                    'kms' => $request->get('kms', $service->kms),
+                    'tentative_date' => $request->get('tentative_date', $service->tentative_date),
+                    'activity' => $request->get('activity', $service->activity),
                 ]);
 
                 return $service;

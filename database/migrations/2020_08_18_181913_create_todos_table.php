@@ -21,7 +21,7 @@ class CreateTodosTable extends Migration
             $table->dateTime('date');
             $table->integer('kms');
             $table->integer('technical_id');
-            $table->integer('client_id');
+            $table->integer('client_id')->nullable();
             $table->foreign('technical_id')->references('id')->on('users');
             $table->foreign('client_id')->references('id')->on('users');
             $table->string('status');

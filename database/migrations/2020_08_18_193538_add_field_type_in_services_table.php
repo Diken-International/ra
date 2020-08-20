@@ -16,6 +16,7 @@ class AddFieldTypeInServicesTable extends Migration
         Schema::table('services', function (Blueprint $table) {
             $table->integer('kms')->default(0);
             $table->string('type')->default('face-to-face');
+            $table->string('activity')->default('corrective');
         });
     }
 
