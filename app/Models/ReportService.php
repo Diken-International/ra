@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\FilesModel;
 use Illuminate\Database\Eloquent\Model;
 
 class ReportService extends Model
 {
+    use FilesModel;
+
     protected $fillable = [
         'service_id',
         'product_user_id',
@@ -24,7 +27,9 @@ class ReportService extends Model
     ];
 
     protected $appends = [
-        'product_user'
+        'product_user',
+        'files',
+        'model'
     ];
 
     public function getProductUserAttribute($value){

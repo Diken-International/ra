@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ModelHelper;
 use App\Http\Requests\Downloads\ReceptionRequest;
+use App\Models\Activities;
 use App\Models\ProductUser;
 use Barryvdh\DomPDF\Facade as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 class LettersController extends Controller
 {
@@ -41,4 +43,48 @@ class LettersController extends Controller
 
         return base64_encode($pdf->output());
     }
+
+    public function planWeek(Request $request){
+
+        /*
+        $todo_week = Activities::where([
+            'technical_id'  =>  $request->current_user->id
+        ])->whereBetween('date_activity', [
+            $request->get('start_week'),
+            $request->get('end_week')
+        ])->get();
+        */
+
+        setlocale(LC_TIME, 'es_ES');
+
+        $todo_week = Activities::all();
+
+        $activities_week = $todo_week->map(function ($todo){
+            $todo->date = (new \DateTime($todo->date_activity))->format('Y-m-d');
+            return $todo;
+        })->groupBy('date');
+
+        $start_day = $request->get('start_week', '2020-08-19');
+        $end_day = $request->get('end_week', '2020-08-27');
+
+        return view('formats.activities_week', [
+            'activities_week' => $activities_week,
+            'range' => [
+                'start' => strftime("%A, %d %B %G", strtotime(Carbon::parse($start_day))),
+                'end'   => strftime("%A, %d %B %G", strtotime(Carbon::parse($end_day)))
+            ]
+        ]);
+
+        /*
+        $pdf = PDF::loadView('formats.activities_week', [
+            'activities_week' => $activities_week
+        ]);
+
+        $pdf->setPaper('A4', 'landscape');
+
+        return base64_encode($pdf->output());
+        */
+
+    }
+
 }
