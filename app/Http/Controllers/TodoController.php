@@ -45,11 +45,11 @@ class TodoController extends Controller
         }
     }
 
-    public function update(TodoRequest $request, $id){
+    public function update(TodoRequest $request, $todo_id){
 
         $data = collect($request->all());
         $data->put('technical_id',$request->current_user->id);
-        $task = ModelHelper::findEntity(Todo::class, $id);
+        $task = ModelHelper::findEntity(Todo::class, $todo_id);
 
         try {
             $task->update($data->all());
