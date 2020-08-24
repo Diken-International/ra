@@ -21,10 +21,9 @@ class TodoController extends Controller
 
         $todo_week = Activities::where([
             'technical_id'  =>  $request->current_user->id
-        ])->whereBetween('date_activity', [
-            $request->get('start_week'),
-            $request->get('end_week')
-        ])->get();
+        ])->whereRaw(
+            "(date_activity >= ? AND date_activity <= ?)",
+            [$request->get('start_week')." 00:00:00", $request->get('end_week')." 23:59:59"])->get();
 
         return CustomResponse::success('Actividades obtenidas correctamente', [
             'day' => $todo_day,

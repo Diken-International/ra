@@ -49,16 +49,15 @@
     </head>
     <body class="system-sans-serif">
         <div class="pa4">
-            <h2>Reporte de actividades semanal</h2>
+            <h2 class="blue">Reporte de actividades semanal</h2>
+            <p>Asesor: <strong>{{ $technical_name }}</strong></p>
             <p>El plan contempla actividades del día <b>{{ $range['start'] }}</b> al <b>{{ $range['end'] }}</b></p>
-
-            {{ $activities_week }}
         </div>
         <div class="ph4">
             <div class="overflow-auto">
                 @foreach($activities_week as $key => $day)
-                    <h3>{{ $key }}</h3>
-                    <table class="f6 w-100 mw8 center" cellspacing="0">
+                    <h3 class="blue">{{ $key }}</h3>
+                    <table class="f6 w-100 mw8 center system-sans-serif" cellspacing="0">
                         <thead>
                         <tr>
                             <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Fecha y hora</th>
@@ -72,12 +71,18 @@
 
 
                         @foreach($day as $activity)
-                            <tr>
+                            <tr class="bg-near-white">
                                 <td class="pv3 pr3 bb b--black-20">{{ $activity->date_activity }}</td>
                                 <td class="pv3 pr3 bb b--black-20">{{ typeActivity($activity->type_activity) }}</td>
                                 <td class="pv3 pr3 bb b--black-20">{{ hasClient($activity->client_id, $activity->client_name ) }}</td>
                                 <td class="pv3 pr3 bb b--black-20">{{ $activity->kms }}</td>
                                 <td class="pv3 pr3 bb b--black-20">{{ activityTrad($activity->activity) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="pv3 pr3 b--light-purple" colspan="5">
+                                    Descripción de actividad: <br>
+                                    <b>{{$activity->description}}</b>
+                                </td>
                             </tr>
                         @endforeach
 
