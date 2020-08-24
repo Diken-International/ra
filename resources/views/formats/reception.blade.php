@@ -71,7 +71,7 @@
       <div class="pa3">
           <h2 class="blue">ENTREGA</h2>
           <div class="pv2">
-              <div class="dib w-50 b">Representante CSS by DIKEN</div>
+              <div class="dib w-50 b">Representante CCS by DIKEN</div>
               <div class="dib w-40 b">Validación del Cliente</div>
           </div>
           <div class="pt1">

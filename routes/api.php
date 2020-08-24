@@ -14,9 +14,7 @@ Route::get('files/{path}', 'FileController@show')
     ->where('path', '([/|.|\w|\s|-])*\.(?:jpg|gif|jpeg|png|docx|pdf)')
     ->name('files.show');
 
-Route::get('download/file/warranty', function (){
-    return view('formats.warranty');
-});
+Route::get('download/file/plan_week', 'LettersController@planWeek')->name('download.plan.week');
 
 /**
  * POST    /modelo/            -> store
@@ -75,7 +73,9 @@ Route::group(['middleware' => ['jwt']], function () {
 
     Route::post('download/file/reception', 'LettersController@reception')->name('download.reception');
     Route::post('download/file/warranty', 'LettersController@warranty')->name('download.warranty');
+    Route::post('download/file/plan_week', 'LettersController@planWeek')->name('download.plan.week');
 
     Route::get('todo','TodoController@index')->name('todo.index');
     Route::post('todo','TodoController@store')->name('todo.store');
+    Route::patch('todo/{todo_id}','TodoController@update')->name('todo.update');
 });

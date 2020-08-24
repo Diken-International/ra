@@ -16,7 +16,7 @@ class CreateTodosView extends Migration
         \Illuminate\Support\Facades\DB::statement("
         CREATE OR REPLACE VIEW  all_activities AS
         SELECT union_data.*,
-       (select concat(name, ' ', last_name) from users where id = union_data.client_id) as client_name,
+       (select company_name from users where id = union_data.client_id) as client_name,
        (select name from users where id = union_data.technical_id) as technical_name
         FROM (
             SELECT
@@ -27,7 +27,8 @@ class CreateTodosView extends Migration
                    todos.date as date_activity,
                    todos.activity as activity,
                    todos.type as type_activity,
-                   todos.kms as kms
+                   todos.kms as kms,
+                   todos.description as description
             FROM todos
             UNION ALL
             SELECT services.id as id,
@@ -37,7 +38,8 @@ class CreateTodosView extends Migration
                    services.tentative_date as date_activity,
                    services.activity as activity,
                    services.type as type_activity,
-                   services.kms as kms
+                   services.kms as kms,
+                   'servicio de mantenimiento' as description
             from services
             ) as union_data
         order by date_activity asc");

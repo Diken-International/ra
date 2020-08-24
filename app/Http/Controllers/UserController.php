@@ -71,16 +71,10 @@ class UserController extends Controller
 
             $create = DB::transaction(function() use($request){
 
+                $data = collect($request->all())
+                        ->put('branch_office_id', $request->current_user->branch_office_id);
 
-                $user = User::create([
-                        'name'              => $request->get('name'),
-                        'last_name'         => $request->get('last_name'),
-                        'second_last_name'  => $request->get('second_last_name'),
-                        'email'             => $request->get('email'),
-                        'password'          => $request->get('password'),
-                        'role'              => $request->get('role'),
-                        'branch_office_id'  => $request->current_user->branch_office_id
-                ]);
+                $user = User::create($data->all());
 
                 return compact('user');
 
@@ -90,7 +84,9 @@ class UserController extends Controller
             return CustomResponse::success("Usuario creado correctamente", $create);
 
         }catch(\Exception $exception){
+
             return CustomResponse::error('No ha sido posible crear el usuario');
+
         }
     }
 
