@@ -51,22 +51,12 @@ class ProductsController extends Controller
 
         	$products = DB::transaction(function() use($request){
         		//
+                $data = collect( $request->all() )
+                        ->put('branch_office_id', $request->current_user->branch_office_id);
 
-        		$products = Products::create([
-
-                    'code' => $request->get('code'),
-                    'name' => $request->get('name'),
-                    'description' => $request->get('description'),
-                    'category_id' => $request->get('category_id'),
-                    'specifications_operation' => $request->get('specifications_operation'),
-                    'specifications_desing' => $request->get('specifications_desing'),
-                    'benefits' => $request->get('benefits'),
-                    'cost' => $request->get('cost'),
-                    'price' => $request->get('price'),
-                    'branch_office_id'=> $request->current_user->branch_office_id,
-
-                ]);
-
+                       
+        		$products = Products::create( $data->all() );
+                
         		return compact('products');
 
         	});
