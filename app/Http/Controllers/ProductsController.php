@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\CustomResponse;
+use App\Helpers\ModelHelper;
 
 /* Models */
 use App\Models\Products;
@@ -69,6 +70,14 @@ class ProductsController extends Controller
         	return CustomResponse::error('El producto no se guardo correctamente', $exception->getMessage());
         }
 
+    }
+
+    public function show(Request $request, $product_id){
+
+        $product = ModelHelper::findEntity(Products::class, $product_id);
+        
+        return CustomResponse::success("Producto obetenido correctamente", ['product' => $product]);
+        
     }
 
     public function update(Request $request, $product_id){

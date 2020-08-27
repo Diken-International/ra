@@ -68,6 +68,7 @@ Route::group(['middleware' => ['jwt']], function () {
 
     Route::get('products','ProductsController@index')->name('products.index');
     Route::post('products','ProductsController@store')->name('products.store');
+    Route::get('products/{product_id}','ProductsController@show')->name('products.show');
     Route::put('products/{product_id}','ProductsController@update')->name('products.update');
     Route::delete('products/{product_id}','ProductsController@destroy')->name('service.message.destroy');
 
