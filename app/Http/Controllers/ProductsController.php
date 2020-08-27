@@ -7,9 +7,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\CustomResponse;
+use App\Helpers\ModelHelper;
 
 /* Models */
 use App\Models\Products;
+use App\Models\Category;
 
 class ProductsController extends Controller
 {
@@ -50,8 +52,12 @@ class ProductsController extends Controller
 
         	$products = DB::transaction(function() use($request){
         		//
-        		$products = Products::create( $request->all() );
+                $data = collect( $request->all() )
+                        ->put('branch_office_id', $request->current_user->branch_office_id);
 
+                       
+        		$products = Products::create( $data->all() );
+                
         		return compact('products');
 
         	});
@@ -64,6 +70,14 @@ class ProductsController extends Controller
         	return CustomResponse::error('El producto no se guardo correctamente', $exception->getMessage());
         }
 
+    }
+
+    public function show(Request $request, $product_id){
+
+        $product = ModelHelper::findEntity(Products::class, $product_id);
+        
+        return CustomResponse::success("Producto obetenido correctamente", ['product' => $product]);
+        
     }
 
     public function update(Request $request, $product_id){
@@ -87,6 +101,7 @@ class ProductsController extends Controller
         if ($validator->fails()) {
             return CustomResponse::error('Error al validar', $validator->errors());
         }
+
         try{
 
         	$products = DB::transaction(function() use($request, $product_id){
@@ -105,6 +120,7 @@ class ProductsController extends Controller
         	return CustomResponse::error('El producto no se guardo correctamente', $exception->getMessage());
 
         }
+
 
     }
 
