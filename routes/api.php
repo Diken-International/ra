@@ -78,4 +78,6 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::get('todo','TodoController@index')->name('todo.index');
     Route::post('todo','TodoController@store')->name('todo.store');
     Route::patch('todo/{todo_id}','TodoController@update')->name('todo.update');
+
+    
 });
