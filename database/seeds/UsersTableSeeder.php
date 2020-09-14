@@ -24,22 +24,22 @@ class UsersTableSeeder extends Seeder
 
 
         User::create([
-            'email' => 'cliente@cliente.com',
-            'password' => 'cliente',
-            'name' => 'cliente',
-            'role' => 'cliente',
+            'email' => 'administrador@diken.com',
+            'password' => 'admin',
+            'name' => 'Sergio',
+            'role' => 'admin',
             'branch_office_id' => $branch_office->id
         ]);
 
         User::create([
-            'email' => 'tecnico@tecnico.com',
+            'email' => 'ccs.celaya@dikeninternational.com',
             'password' => 'tecnico',
             'name' => 'tecnico',
             'role' => 'tecnico',
             'branch_office_id' => $branch_office->id
         ]);
 
-
+        /*
         $faker = \Faker\Factory::create();
 
         for ($i=0; $i<= 5; $i++){
@@ -52,6 +52,7 @@ class UsersTableSeeder extends Seeder
                 'branch_office_id' => $branch_office->id
             ]);
         }
+        */
 
     }
 }
