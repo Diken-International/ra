@@ -86,4 +86,5 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::put('projects/{project_id}','ProjectsController@update')->name('projects.update');
     Route::delete('projects/{product_id}','ProjectsController@destroy')->name('projects.destroy');
     
+    Route::get('services/report/{technical_id?}/{start_date}/{end_date}','ReportServiceController@index')->name('report.index');
 });
