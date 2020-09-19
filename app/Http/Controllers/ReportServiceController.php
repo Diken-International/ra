@@ -5,37 +5,30 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Helpers\CustomResponse;
+use App\Helpers\ModelHelper;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\Service_Reposts\ServicesReportsIndexRequest;
 
-
-use App\Models\Services;
+use App\Models\Reports;
 
 class ReportServiceController extends Controller
 {
-    //
-    public function index(Request $request,$technical_id,$start_date,$end_date){
 
-    	if($technical_id != null){
+    public function index(ServicesReportsIndexRequest $request){
 
-    		$service_rep = DB::transaction(function() use($request, $technical_id, $start_date, $end_date){
-    			
-    			$services_report = Services::with(['reportServices' => function($report) use($start_date) {
-    				$report->where('service_start',$start_date);
-    			}])->get();
-				
-    			//return compact('services_report');
-    			
-    			dd($services_report);
-    		});
+        
+        if($request->get('technical_id') == null){
 
-    		//return CustomResponse::success('Reporte Encontrado', $service_rep);
-    	}
-    		/*
-    		$services_report = Services::where([
-    			'branch_office_id'=>$request->current_user->branch_office_id
-    		])->get();
+            $service_report = Reports::whereDate('service_begin', $request->get('service_begin') )
+            ->orWhereDate('service_end', $request->get('service_end') )
+            ->get();
+        
 
-    		return $services_report;
-    		*/
+            return CustomResponse::success('Reporte encontrado correctamente',$service_report);
+        }
+        
+        echo "Error";
+
+        
     }
 }
