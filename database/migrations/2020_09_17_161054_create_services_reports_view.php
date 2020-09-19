@@ -19,8 +19,15 @@ class CreateServicesReportsView extends Migration
             (select sum(cost_sum::float)
              from (select r.id, elem->>'cost' as cost_sum from report_services r, json_array_elements(costs) elem) as rep
              where report_services.id = rep.id group by rep.id
-            ) as sum_costs,
-            users.company_name as client_name,
+            ) as extra_total_costs,
+
+            (select sum(total_cost::float)
+             from (select re.id, elemen->>'cost' as total_cost from report_services re, json_array_elements(costs_repairs) elemen ) as total
+             where report_services.id = total.id group by total.id
+            ) as repairs_total_cost,
+
+            (select count(*) from services) as number_services,
+
             (select concat(technical.name, ' ', technical.last_name) from users as technical where technical.id = services.technical_id ) as technical_name,
             services.type as services_type,
             services.activity as activity_type,
