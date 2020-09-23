@@ -18,13 +18,16 @@ class ReportServiceController extends Controller
 
         
         if($request->get('technical_id') == null){
-
+        	/*
             $service_report = Reports::whereDate('service_begin', $request->get('service_begin') )
             ->orWhereDate('service_end', $request->get('service_end') )
             ->get();
-        
+        	*/
+            $report = Reports::where('service_begin', '>=', $request->get('service_begin') )
+            ->where('service_end','<=', $request->get('service_end') )
+            ->get();
 
-            return CustomResponse::success('Reporte encontrado correctamente',$service_report);
+            return CustomResponse::success('Reporte encontrado correctamente',$report);
         }
         
         echo "Error";
