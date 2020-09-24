@@ -17,20 +17,18 @@ class ReportServiceController extends Controller
     public function index(ServicesReportsIndexRequest $request){
 
         
-        if($request->get('technical_id') == null){
-        	/*
-            $service_report = Reports::whereDate('service_begin', $request->get('service_begin') )
-            ->orWhereDate('service_end', $request->get('service_end') )
-            ->get();
-        	*/
-            $report = Reports::where('service_begin', '>=', $request->get('service_begin') )
-            ->where('service_end','<=', $request->get('service_end') )
-            ->get();
+        if($request->current_user->role == 'admin'){
+        	
+            $services = Reports::whereBetween('service_begin',[ $request->get('service_begin'), $request->get('service_end')])->get();
 
-            return CustomResponse::success('Reporte encontrado correctamente',$report);
+            return CustomResponse::success('Reporte encontrado correctamente',$services);
         }
         
-        echo "Error";
+            $services = Reports::where('technical_id', $request->current_user->id)->get();
+
+            return CustomResponse::success('Reporte de tecnico encontrado correctamente',$services);
+
+       
 
         
     }

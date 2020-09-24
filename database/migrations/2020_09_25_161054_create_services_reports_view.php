@@ -28,6 +28,7 @@ class CreateServicesReportsView extends Migration
 
             (select count(*) from services) as number_services,
 
+            users.company_name as client_name,
             (select concat(technical.name, ' ', technical.last_name) from users as technical where technical.id = services.technical_id ) as technical_name,
             services.type as services_type,
             services.activity as activity_type,
@@ -35,7 +36,8 @@ class CreateServicesReportsView extends Migration
             report_services.status as report_status,
             report_services.service_start as service_begin,
             report_services.service_end as service_end,
-            report_services.progress as service_progress
+            report_services.progress as service_progress,
+            services.technical_id
             from services 
             INNER JOIN report_services
              ON report_services.service_id = services.id
