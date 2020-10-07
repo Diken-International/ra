@@ -70,7 +70,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('products','ProductsController@store')->name('products.store');
     Route::get('products/{product_id}','ProductsController@show')->name('products.show');
     Route::put('products/{product_id}','ProductsController@update')->name('products.update');
-    Route::delete('products/{product_id}','ProductsController@destroy')->name('service.message.destroy');
+    Route::delete('products/{product_id}','ProductsController@destroy')->name('products.destroy');
 
     Route::post('download/file/reception', 'LettersController@reception')->name('download.reception');
     Route::post('download/file/warranty', 'LettersController@warranty')->name('download.warranty');
@@ -80,5 +80,10 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('todo','TodoController@store')->name('todo.store');
     Route::patch('todo/{todo_id}','TodoController@update')->name('todo.update');
 
+    Route::get('projects','ProjectsController@index')->name('projects.index');
+    Route::post('projects','ProjectsController@store')->name('projects.store');
+    Route::get('projects/{project_id}','ProjectsController@show')->name('projects.show');
+    Route::put('projects/{project_id}','ProjectsController@update')->name('projects.update');
+    Route::delete('projects/{product_id}','ProjectsController@destroy')->name('projects.destroy');
     
 });
