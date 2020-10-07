@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\ValidRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -21,15 +22,15 @@ class ProjectsController extends Controller
 
     	$data    = PaginatorHelper::create($project, $request);
 
-    	return CustomResponse::success("Proyectos obtenidos correctamente", $data); 
+    	return CustomResponse::success("Proyectos obtenidos correctamente", $data);
     }
 
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
-            
+
             'name' => 'required',
-            'technical_id' => 'required',
+            'technical_id' => ['required', new ValidRole('tecnico')],
             'resources' => 'required',
         ]);
 
@@ -42,7 +43,6 @@ class ProjectsController extends Controller
         	$project = DB::transaction(function() use($request){
 
         		$project = Projects::create( $request->all() );
-        		//dd($request->all() );
         		return compact('project');
 
         	});
@@ -66,9 +66,9 @@ class ProjectsController extends Controller
 
     public function update(Request $request, $project_id){
 
-        $validator = Validator::make($request->all(), [            
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
-            'technical_id' => 'required',
+            'technical_id' => ['required', new ValidRole('tecnico')],
             'resources' => 'required',
         ]);
 
