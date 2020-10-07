@@ -16,20 +16,36 @@ class ReportServiceController extends Controller
 
     public function index(ServicesReportsIndexRequest $request){
 
-        
-        if($request->current_user->role == 'admin'){
-        	
-            $services = Reports::whereBetween('service_begin',[ $request->get('service_begin'), $request->get('service_end')])->get();
 
-            return CustomResponse::success('Reporte encontrado correctamente',$services);
+        if($request->current_user->role == 'admin'){
+
+            $query_set = Reports::whereRaw(
+                "(service_begin >= ? AND service_begin <= ?)",
+                [$request->get('service_begin')." 00:00:00", $request->get('service_end')." 23:59:59"]);
+
+            if (!empty($request->get('technical_id'))){
+                $query_set = $query_set->where('technical_id', $request->get('technical_id'))->get();
+            }
+
+            if (!empty($request->get('report_status'))){
+                $query_set = $query_set->where('report_status', $request->get('report_status'))->get();
+            }
+
+            $services = $query_set->get();
+
+            return CustomResponse::success('Reporte encontrado correctamente',['services' => $services]);
         }
-        
+
+        if($request->current_user->role == 'tecnico'){
+
             $services = Reports::where('technical_id', $request->current_user->id)->get();
 
-            return CustomResponse::success('Reporte de tecnico encontrado correctamente',$services);
+            return CustomResponse::success('Reporte de tecnico encontrado correctamente',['services' => $services]);
+        }
 
-       
 
-        
+        return CustomResponse::success("Reporte sin datos para mostrar", ['services' => []]);
+
+
     }
 }
