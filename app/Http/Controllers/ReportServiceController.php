@@ -33,7 +33,7 @@ class ReportServiceController extends Controller
 
             $services = $query_set->get();
 
-            return CustomResponse::success('Reporte encontrado correctamente',['services' => $services]);
+            return CustomResponse::success('Reporte administrativo',['services' => $services]);
         }
 
         if($request->current_user->role == 'tecnico'){
@@ -43,6 +43,13 @@ class ReportServiceController extends Controller
             return CustomResponse::success('Reporte de tecnico encontrado correctamente',['services' => $services]);
         }
 
+        if ($request->current_user->role == 'cliente'){
+
+            $services = Reports::where('client_id', $request->current_user->id)->get();
+
+            return CustomResponse::success('Reporte de cliente encontrado correctamente',['services' => $services]);
+
+        }
 
         return CustomResponse::success("Reporte sin datos para mostrar", ['services' => []]);
 
