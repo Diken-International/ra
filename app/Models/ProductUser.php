@@ -19,7 +19,8 @@ class ProductUser extends Model
         'serial_number',
         'period_service',
         'next_service',
-        'last_service'
+        'last_service',
+        'update'
     ];
 
     protected $appends = [

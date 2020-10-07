@@ -37,7 +37,9 @@ class ReportService extends Model
             'id',
             'product_id',
             'user_id',
-            'serial_number'
+            'serial_number',
+            'update',
+            'last_service'
         ])->first();
     }
 

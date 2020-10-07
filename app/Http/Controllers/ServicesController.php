@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\AvailableHelper;
 use App\Helpers\ModelHelper;
 use App\Models\Products;
+use App\Models\ProductUser;
 use App\Models\ReportService;
 use App\Rules\ValidRole;
 use App\Models\File;
@@ -173,6 +174,14 @@ class ServicesController extends Controller
             DB::transaction(function () use ($report, $request){
                 $report->update($request->all());
                 $report->progress = ($request->get('status') == 'terminado') ? 100 : 50;
+
+                if ($request->get('status') == 'terminado'){
+                    $product_user = ProductUser::find($report->productUser->id);
+                    $product_user->update = true;
+                    $product_user->last_service = Carbon::now();
+                    $product_user->save();
+                }
+
                 $report->save();
             });
 
