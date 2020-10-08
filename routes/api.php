@@ -40,6 +40,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('clients/{user_id}/product-relation','ClientController@addProduct')->name('clients.add.products');
     Route::get('clients/{user_id}/product-relation','ClientController@listProduct')->name('clients.list.products');
     Route::get('clients/{user_id}/product-relation/{product_id}','ClientController@detailProduct')->name('clients.detail.products');
+    Route::patch('clients/{user_id}/product-relation/{product_id}','ClientController@editProduct')->name('clients.edit.products');
 
     Route::get('services','ServicesController@index')->name('services.index');
     Route::post('services','ServicesController@store')->name('services.store');
@@ -85,7 +86,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::get('projects/{project_id}','ProjectsController@show')->name('projects.show');
     Route::put('projects/{project_id}','ProjectsController@update')->name('projects.update');
     Route::delete('projects/{product_id}','ProjectsController@destroy')->name('projects.destroy');
-    
+
     Route::get('report/services','ReportServiceController@index')->name('report.index');
 
 

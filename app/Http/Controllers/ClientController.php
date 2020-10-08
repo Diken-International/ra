@@ -116,4 +116,29 @@ class ClientController extends Controller
         return CustomResponse::success("Detalle obtenido correctamente", ['product_user' => $product_user]);
     }
 
+
+    public function editProduct(Request $request, $user_id, $product_id){
+
+        $product_user = ModelHelper::findEntity(ProductUser::class, $product_id, ['user_id' => $user_id]);
+
+        try{
+
+            $product_user = DB::transaction(function() use($request, $product_user){
+
+                $product_user->update($request->all('product_type', 'status', 'period_service'));
+                $product_user->update = true;
+                $product_user->save();
+                return compact('product_user');
+
+            });
+
+            return CustomResponse::success("Producto del usuario actualizado correctamente", $product_user);
+
+        }catch(\Exception $exception){
+
+            return CustomResponse::error('No ha sido posible modificar el cliente', $exception->getMessage());
+
+        }
+    }
+
 }

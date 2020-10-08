@@ -40,7 +40,7 @@ class CheckNextService extends Command
      */
     public function handle()
     {
-        $products_update =  ProductUser::where('update', true)->select(
+        $products_update =  ProductUser::where(['update' => true, 'status' => true])->select(
             "id",
             "period_service",
             "next_service",
