@@ -31,6 +31,10 @@ class ReportServiceController extends Controller
                 $query_set = $query_set->where('report_status', $request->get('report_status'))->get();
             }
 
+            if (!empty($request->get('product_serial_number'))){
+                $query_set = $query_set->where('product_serial_number', $request->get('product_serial_number'))->get();
+            }
+
             $services = $query_set->get();
 
             return CustomResponse::success('Reporte administrativo',['services' => $services]);
