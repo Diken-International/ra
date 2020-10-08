@@ -35,7 +35,7 @@ class ProductUser extends Model
     }
 
     public function getClientAttribute(){
-        return $this->client()->select('id','name')->first();
+        return $this->client()->select('id','name', 'business_name', 'rfc', 'company_name')->first();
     }
 
     public function product(){
