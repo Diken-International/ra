@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\CustomResponse;
 use App\Helpers\ModelHelper;
+use App\Http\Requests\Seach_Product\SeachProductRequest;
 
 /* Models */
 use App\Models\Products;
 use App\Models\Category;
+use App\Models\ProductUser;
 
 class ProductsController extends Controller
 {
@@ -144,6 +146,23 @@ class ProductsController extends Controller
     		return CustomResponse::error('El producto no se desactivo correctamente', $exception->getMessage());
     	}
 
+    }
+
+    public function listServiesProduct(SeachProductRequest $request){
+
+        $product_seach = ProductUser::select('report_services.service_id','report_services.id','report_services.status','product_user.last_service')
+        ->join('report_services','product_user.id','=','report_services.product_user_id')
+        ->where([ 
+            'serial_number' => $request->get('serial_number')
+            
+        ])
+        ->where('report_services.status', '<>', 'terminado')
+        ->where('report_services.status', '<>', 'cancelado')
+        ->get();
+
+        $data = PaginatorHelper::create($product_seach, $request);
+
+        return CustomResponse::success("Data encontrada correctamente", $data );
     }
 
 }
