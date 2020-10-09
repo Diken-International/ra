@@ -26,6 +26,7 @@ class ProductUser extends Model
     protected $appends = [
         'product',
         'client',
+        'number_of_services_performed',
         'model',
         'files'
     ];
@@ -38,11 +39,19 @@ class ProductUser extends Model
         return $this->client()->select('id','name', 'business_name', 'rfc', 'company_name')->first();
     }
 
+    public function getNumberofservicesperformedAttribute(){
+        return $this->reportservices()->where('product_user_id', $this->id)->sum('product_user_id');
+    }
+
     public function product(){
         return $this->hasOne(Products::class, 'id', 'product_id');
     }
 
     public function client(){
         return $this->hasOne(Client::class, 'id', 'user_id');
+    }
+
+    public function reportservices(){
+        return $this->hasMany(ReportService::class, 'product_user_id', 'id');
     }
 }

@@ -102,11 +102,12 @@ class ClientController extends Controller
     public function listProduct(Request $request, $user_id){
 
         $collect_product_user = ProductUser::where('user_id', $user_id)->orderBy('next_service', 'asc')->get();
-
+        
         $data = PaginatorHelper::create($collect_product_user, $request);
 
         return CustomResponse::success("Data encontrada correctamente", $data );
-
+        
+        
     }
 
     public function detailProduct(Request $request, $user_id, $product_id){
