@@ -26,8 +26,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 
-        $schedule->command(CheckNextService::class)
-            ->everyFourHours();
+        $schedule->command(CheckNextService::class)->twiceDaily(1, 13)->timezone('America/Mexico_City');
     }
 
     /**
