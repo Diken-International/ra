@@ -3,14 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ReportHelper;
-use Carbon\Carbon;
-
 use App\Helpers\CustomResponse;
-
 use App\Http\Requests\Service_Reposts\ServicesReportsIndexRequest;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 use App\Models\Reports;
 
 class ReportServiceController extends Controller
@@ -22,23 +16,21 @@ class ReportServiceController extends Controller
 
         if($request->current_user->role == 'admin'){
 
-            if (!empty($request->get('technical_id'))){
-                $query_set = $query_set->where('technical_id', $request->get('technical_id'));
-            }
-
             return $this->responseGeneric($query_set, $request);
         }
 
         if($request->current_user->role == 'tecnico'){
 
-            $query_set = $query_set::where('technical_id', $request->current_user->id);
+            // $query_set = $query_set->where('technical_id', $request->current_user->id);
+            $request->merge(["technical_id" => $request->current_user->id]);
 
             return $this->responseGeneric($query_set, $request);
         }
 
         if ($request->current_user->role == 'cliente'){
 
-            $query_set = $query_set::where('client_id', $request->current_user->id);
+            //$query_set = $query_set->where('client_id', $request->current_user->id);
+            $request->merge(["client_id" => $request->current_user->id]);
 
             return $this->responseGeneric($query_set, $request);
 

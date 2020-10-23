@@ -41,6 +41,14 @@ class ReportHelper
         if (!empty($request->get('product_serial_number'))){
             $query_set = $query_set->where('product_serial_number', $request->get('product_serial_number'));
         }
+
+        if (!empty($request->get('technical_id'))){
+            $query_set = $query_set->where('technical_id', $request->get('technical_id'));
+        }
+
+        if (!empty($request->get('client_id'))){
+            $query_set = $query_set->where('client_id', $request->get('client_id'));
+        }
         /*
          * clone query to use in others moments
          */
@@ -103,7 +111,7 @@ class ReportHelper
         foreach (ReportHelper::$translate_fields as $key => $value){
             $sheet->setCellValueByColumnAndRow($count, 3, $value);
             $count++;
-        }   
+        }
 
         $row = 4;
         foreach ($report['services'] as $service){
