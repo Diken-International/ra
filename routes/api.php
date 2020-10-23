@@ -61,11 +61,12 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('files', 'FileController@upload')->name('files.upload');
     Route::delete('files/{file_id}', 'FileController@delete')->name('files.delete');
 
-    Route::get('repairs','RepairsController@index')->name('repairs.index');
-    Route::post('repairs','RepairsController@store')->name('repair.store');
-    Route::put('repairs/{repair_id}','RepairsController@update')->name('repair.update');
     Route::get('repairs/products', 'RepairsController@products')->name('repair.products');
     Route::get('repairs/categories', 'RepairsController@categories')->name('repair.categories');
+    Route::get('repairs','RepairsController@index')->name('repairs.index');
+    Route::post('repairs','RepairsController@store')->name('repair.store');
+    Route::get('repairs/{repair_id}','RepairsController@show')->name('repair.show');
+    Route::put('repairs/{repair_id}','RepairsController@update')->name('repair.update');
 
     Route::get('products','ProductsController@index')->name('products.index');
     Route::post('products','ProductsController@store')->name('products.store');

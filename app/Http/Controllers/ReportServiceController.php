@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Helpers\ReportHelper;
+use Carbon\Carbon;
 
 use App\Helpers\CustomResponse;
-use App\Helpers\ModelHelper;
-use Illuminate\Support\Facades\DB;
+
 use App\Http\Requests\Service_Reposts\ServicesReportsIndexRequest;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use App\Models\Reports;
 
@@ -16,47 +18,48 @@ class ReportServiceController extends Controller
 
     public function index(ServicesReportsIndexRequest $request){
 
+        $query_set = Reports::class;
 
         if($request->current_user->role == 'admin'){
 
-            $query_set = Reports::whereRaw(
-                "(service_begin >= ? AND service_begin <= ?)",
-                [$request->get('service_begin')." 00:00:00", $request->get('service_end')." 23:59:59"]);
-
             if (!empty($request->get('technical_id'))){
-                $query_set = $query_set->where('technical_id', $request->get('technical_id'))->get();
+                $query_set = $query_set->where('technical_id', $request->get('technical_id'));
             }
 
-            if (!empty($request->get('report_status'))){
-                $query_set = $query_set->where('report_status', $request->get('report_status'))->get();
-            }
-
-            if (!empty($request->get('product_serial_number'))){
-                $query_set = $query_set->where('product_serial_number', $request->get('product_serial_number'))->get();
-            }
-
-            $services = $query_set->get();
-
-            return CustomResponse::success('Reporte administrativo',['services' => $services]);
+            return $this->responseGeneric($query_set, $request);
         }
 
         if($request->current_user->role == 'tecnico'){
 
-            $services = Reports::where('technical_id', $request->current_user->id)->get();
+            $query_set = $query_set::where('technical_id', $request->current_user->id);
 
-            return CustomResponse::success('Reporte de tecnico encontrado correctamente',['services' => $services]);
+            return $this->responseGeneric($query_set, $request);
         }
 
         if ($request->current_user->role == 'cliente'){
 
-            $services = Reports::where('client_id', $request->current_user->id)->get();
+            $query_set = $query_set::where('client_id', $request->current_user->id);
 
-            return CustomResponse::success('Reporte de cliente encontrado correctamente',['services' => $services]);
+            return $this->responseGeneric($query_set, $request);
 
         }
 
         return CustomResponse::success("Reporte sin datos para mostrar", ['services' => []]);
 
 
+    }
+
+    private function responseGeneric($query_set, $request){
+
+        if (!empty($request->get('download'))){
+            $report = ReportHelper::ReportServices($query_set, $request, false);
+            $writer = ReportHelper::createExcel($report);
+            $writer->save($request->current_user->id.'_report_services.xlsx');
+            return response()->download($request->current_user->id.'_report_services.xlsx')->deleteFileAfterSend();
+
+        }
+
+        $report = ReportHelper::ReportServices($query_set, $request, true);
+        return CustomResponse::success('Reporte administrativo',$report);
     }
 }

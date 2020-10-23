@@ -37,9 +37,7 @@ class ProductsController extends Controller
             'category_id' => 'required',
             'specifications_operation' => 'required',
             'specifications_desing' => 'required',
-            'benefits' => 'required',
-            'cost' => 'required',
-            'price' => 'required',
+            'benefits' => 'required'
 
 
         ]);
@@ -55,9 +53,9 @@ class ProductsController extends Controller
                 $data = collect( $request->all() )
                         ->put('branch_office_id', $request->current_user->branch_office_id);
 
-                       
+
         		$products = Products::create( $data->all() );
-                
+
         		return compact('products');
 
         	});
@@ -75,9 +73,9 @@ class ProductsController extends Controller
     public function show(Request $request, $product_id){
 
         $product = ModelHelper::findEntity(Products::class, $product_id);
-        
+
         return CustomResponse::success("Producto obetenido correctamente", ['product' => $product]);
-        
+
     }
 
     public function update(Request $request, $product_id){
@@ -91,9 +89,7 @@ class ProductsController extends Controller
             'category_id' => 'required',
             'specifications_operation' => 'required',
             'specifications_desing' => 'required',
-            'benefits' => 'required',
-            'cost' => 'required',
-            'price' => 'required',
+            'benefits' => 'required'
 
 
         ]);

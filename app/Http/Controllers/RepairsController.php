@@ -6,6 +6,7 @@ use App\Helpers\PaginatorHelper;
 use App\Models\CategoryRepairParts;
 use App\Models\ProductRepairParts;
 use App\Models\Products;
+use App\Models\Repairs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -28,19 +29,25 @@ class RepairsController extends Controller
 
     }
 
+    public function show(Request $request, $id){
+
+        $repair = RepairsParts::with(['category', 'product'])
+            ->where(['id' => $id])
+            ->first();
+
+        return CustomResponse::success("Reparacione obtenida", compact('repair'));
+
+    }
+
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [
             'code' => 'required',
-            'parts_num' => 'required',
-            'number_diken' => 'required',
             'category_repair_parts_id' => 'required',
             'product_repair_parts_id' => 'required',
             'name' => 'required',
             'features' => 'required',
-            'quantity' => 'required',
-            'number_of_part' => 'required',
-
+            'quantity' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -71,10 +78,7 @@ class RepairsController extends Controller
 
                 'code' => 'required',
                 'name' => 'required',
-                'quantity' => 'required',
-                'price' => 'required',
-
-
+                'quantity' => 'required'
             ]);
 
             if ($validator->fails()) {
@@ -85,7 +89,7 @@ class RepairsController extends Controller
 
                 $repairs = DB::transaction(function() use($request, $id){
 
-                    $repair = Repairs::where('id',$id)->first();
+                    $repair = RepairsParts::where('id',$id)->first();
 
                     $repair->update( $request->all() );
 
