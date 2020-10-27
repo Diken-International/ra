@@ -7,6 +7,7 @@ use App\Models\CategoryRepairParts;
 use App\Models\ProductRepairParts;
 use App\Models\Products;
 use App\Models\Repairs;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +69,7 @@ class RepairsController extends Controller
 
         }catch(\Exception $exception){
 
+            Bugsnag::notifyException($exception);
         	return CustomResponse::error('La reparacion no se guardo correctamente', $exception->getMessage());
         }
     }
@@ -101,6 +103,7 @@ class RepairsController extends Controller
 
             }catch(\Exception $exception){
 
+                Bugsnag::notifyException($exception);
                 return CustomResponse::error('La reparacion no se guardo correctamente', $exception->getMessage());
             }
 
