@@ -9,6 +9,7 @@ use App\Http\Requests\Todo\TodoRequest;
 use App\Models\Activities;
 use App\Models\Services;
 use App\Models\Todo;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Illuminate\Http\Request;
 
 class TodoController extends Controller
@@ -41,6 +42,7 @@ class TodoController extends Controller
             $task = Todo::create($data->all());
             return CustomResponse::success('Actividad creada correctamente', ['task' => $task]);
         }catch (\Exception $exception){
+            Bugsnag::notifyException($exception);
             return CustomResponse::error('La actividad no fue creada');
         }
     }
@@ -55,6 +57,7 @@ class TodoController extends Controller
             $task->update($data->all());
             return CustomResponse::success('Actividad actualizada correctamente', ['task' => $task]);
         }catch (\Exception $exception){
+            Bugsnag::notifyException($exception);
             return CustomResponse::error('La actividad no fue actualizada');
         }
     }

@@ -87,6 +87,10 @@ return [
             'driver' => 'errorlog',
             'level' => 'debug',
         ],
+        // Create a bugsnag logging channel:
+        'bugsnag' => [
+            'driver' => 'bugsnag',
+        ],
     ],
 
 ];
