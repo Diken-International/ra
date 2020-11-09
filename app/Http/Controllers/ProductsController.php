@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 use App\Helpers\CustomResponse;
 use App\Helpers\ModelHelper;
 use App\Http\Requests\Seach_Product\SeachProductRequest;
+use PDF;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 /* Models */
 use App\Models\Products;
@@ -180,6 +182,18 @@ class ProductsController extends Controller
         $data = PaginatorHelper::create($product_seach, $request);
 
         return CustomResponse::success("Data encontrada correctamente", $data );
+    }
+
+    public function domSerialNumber(Request $request){
+        //dd( $request->get('serial_number') );
+        
+        $number = ProductUser::where('serial_number', $request->get('serial_number') )->first();
+        
+        $pdf = \PDF::loadView('formats.serial_number', compact('number'));
+            
+        return $pdf->stream('invoice.pdf');
+        
+
     }
 
 }
