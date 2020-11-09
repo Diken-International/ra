@@ -14,7 +14,9 @@ use App\Http\Requests\Seach_Product\SeachProductRequest;
 use App\Models\Products;
 use App\Models\Category;
 use App\Models\ProductUser;
+
 use App\Models\Reports;
+
 
 class ProductsController extends Controller
 {
@@ -151,6 +153,7 @@ class ProductsController extends Controller
 
     public function listServiesProduct(SeachProductRequest $request){
 
+
         
         $report_seach = Reports::whereRaw(
             "(product_serial_number = ?)",
@@ -163,6 +166,20 @@ class ProductsController extends Controller
 
         return CustomResponse::success("Data encontrada correctamente", $data );
         
+
+        $product_seach = ProductUser::select('report_services.service_id','report_services.id','report_services.status','product_user.last_service')
+        ->join('report_services','product_user.id','=','report_services.product_user_id')
+        ->where([ 
+            'serial_number' => $request->get('serial_number')
+            
+        ])
+        ->where('report_services.status', '<>', 'terminado')
+        ->where('report_services.status', '<>', 'cancelado')
+        ->get();
+
+        $data = PaginatorHelper::create($product_seach, $request);
+
+        return CustomResponse::success("Data encontrada correctamente", $data );
     }
 
 }
