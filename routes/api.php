@@ -92,5 +92,5 @@ Route::group(['middleware' => ['jwt', 'cors']], function () {
 
     Route::get('product/search','ProductsController@listServiesProduct')->name('product.seach');
 
-
+    Route::get('product/serial/number','ProductsController@domSerialNumber')->name('product.serial');
 });
