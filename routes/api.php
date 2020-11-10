@@ -24,7 +24,7 @@ Route::get('download/file/plan_week', 'LettersController@planWeek')->name('downl
  * DELETE  /modelo/{modelo_id} -> delete
  */
 
-Route::group(['middleware' => ['jwt']], function () {
+Route::group(['middleware' => ['jwt', 'cors']], function () {
 
     Route::get('users','UserController@index')->name('users.index');
     Route::post('users','UserController@store')->name('users.store');
