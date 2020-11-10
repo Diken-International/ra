@@ -168,13 +168,34 @@ class ProductsController extends Controller
     }
 
     public function domSerialNumber(Request $request){
-        //dd( $request->get('serial_number') );
         
-        $number = ProductUser::where('serial_number', $request->get('serial_number') )->first();
+        
+        $number = ProductUser::select(
+            'products.code',
+            'products.name',
+            'product_user.serial_number',
+            'branch_offices.name as Bussines',
+            'product_user.product_type',
+            'category.name as Category'
+
+        )
+        ->join('products','product_user.product_id','=','products.id')
+
+        ->join('branch_offices','products.branch_office_id','=','branch_offices.id')
+
+        ->join('category','products.category_id','=','category.id')
+
+        ->where([
+            'serial_number' => $request->get('serial_number')
+        ])
+
+        ->first();
+
+        
         
         $pdf = \PDF::loadView('formats.serial_number', compact('number'));
             
-        return $pdf->stream('invoice.pdf');
+        return $pdf->stream("$number->serial_number.pdf");
         
 
     }
