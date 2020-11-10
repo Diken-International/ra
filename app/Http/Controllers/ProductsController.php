@@ -177,7 +177,7 @@ class ProductsController extends Controller
             'branch_offices.name as Sucursal',
             'product_user.product_type',
             'category.name as Category',
-            'users.company_name as Compania '
+            'users.company_name'
 
         )
         ->join('products','product_user.product_id','=','products.id')
@@ -194,7 +194,7 @@ class ProductsController extends Controller
 
         ->first();
 
-        
+        //dd($number);
         
         $pdf = \PDF::loadView('formats.serial_number', compact('number'));
             
