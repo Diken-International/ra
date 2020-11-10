@@ -2,31 +2,44 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Laravel PDF</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <title>Reporte de Eqipos</title>
   </head>
+  <style type="text/css">
+    h1{
+      margin-top: 50px;
+      margin-left: 300px;
+    }
+    .qr{
+      margin-left: 99px;
+    }
+    .foot{
+      padding-top: 80px;
+      margin-left: 400px;
+    }
+  </style>
   <body>
-    <h2 class="mb-3">
-      <center>
-        {{ $number->name }}
-      </center>  
-    </h2>
+    <h1>
+        {{ $number->name }}  
+    </h1>
     <br>
-    <table class="table">
+    <table>
       <tbody>
        <tr>
         <td>
-          <div class="visible-print text-center">
-              <img src="data:image/png;base64, {{ base64_encode(QrCode::format('png')->size(500)->generate("$number->serial_number")) }} ">
+          <div class="visible-print text-center qr">
+              <img src="data:image/png;base64, {{ base64_encode(QrCode::format('png')->size(500)->generate('numero de serie: '." $number->serial_number")) }} ">
           </div>
         </td>
        </tr> 
       </tbody>
     </table>
+    <br>
+    <br>
     <h2>Informacion del Equipo</h2>
     <br>
-    <br>
     <h3>Numero de serie: {{ $number->serial_number }}</h3>
-    <h3>Empresa o Compañia: {{ $number->Bussines }}</h3>
+    <h3>Empresa o Compañia: {{ $number->Compania }}</h3>
+    <h3>Tipo de Equipo: (Prestado ò Comodato) {{ $number->product_type }}</h3>
+    <p class="foot">Informaciòn generada por <a href=""><u>diken.mx</u></a></p>
   </body>
 </html>

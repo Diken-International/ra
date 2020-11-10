@@ -174,9 +174,10 @@ class ProductsController extends Controller
             'products.code',
             'products.name',
             'product_user.serial_number',
-            'branch_offices.name as Bussines',
+            'branch_offices.name as Sucursal',
             'product_user.product_type',
-            'category.name as Category'
+            'category.name as Category',
+            'users.company_name as Compania '
 
         )
         ->join('products','product_user.product_id','=','products.id')
@@ -184,6 +185,8 @@ class ProductsController extends Controller
         ->join('branch_offices','products.branch_office_id','=','branch_offices.id')
 
         ->join('category','products.category_id','=','category.id')
+
+        ->join('users', 'product_user.user_id','=','users.id')
 
         ->where([
             'serial_number' => $request->get('serial_number')
