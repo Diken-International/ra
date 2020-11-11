@@ -18,6 +18,7 @@ use App\Models\Category;
 use App\Models\ProductUser;
 use App\Models\Reports;
 
+
 class ProductsController extends Controller
 {
     //
@@ -152,7 +153,6 @@ class ProductsController extends Controller
     }
 
     public function listServiesProduct(SeachProductRequest $request){
-
         
         $report_seach = Reports::whereRaw(
             "(product_serial_number = ?)",
@@ -164,7 +164,7 @@ class ProductsController extends Controller
         $data = PaginatorHelper::create($report, $request);
 
         return CustomResponse::success("Data encontrada correctamente", $data );
-        
+
     }
 
     public function domSerialNumber(Request $request){
