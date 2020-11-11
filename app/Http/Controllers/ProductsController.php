@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\PaginatorHelper;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -72,7 +73,7 @@ class ProductsController extends Controller
 
         }catch(\Exception $exception){
 
-
+        	Bugsnag::notifyException($exception);
         	return CustomResponse::error('El producto no se guardo correctamente', $exception->getMessage());
         }
 
@@ -122,7 +123,7 @@ class ProductsController extends Controller
         	return CustomResponse::success('Producto modificado correctamente', $products);
 
         }catch(\Exception $exception){
-
+        	Bugsnag::notifyException($exception);
         	return CustomResponse::error('El producto no se guardo correctamente', $exception->getMessage());
 
         }
@@ -146,7 +147,7 @@ class ProductsController extends Controller
         	return CustomResponse::success('Producto desactivado correctamente', $products_to_delete);
 
     	}catch(\Exception $exception){
-
+    		Bugsnag::notifyException($exception);
     		return CustomResponse::error('El producto no se desactivo correctamente', $exception->getMessage());
     	}
 
