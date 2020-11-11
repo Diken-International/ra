@@ -8,4 +8,6 @@ class Reports extends Model
 {
     //
     protected $table = 'services_reports';
+
+    
 }
