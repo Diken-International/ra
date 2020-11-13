@@ -28,7 +28,7 @@
        <tr>
         <td>
           <div class="visible-print text-center qr">
-              <img src="data:image/png;base64, {{ base64_encode(QrCode::format('png')->size(500)->generate(" $number->serial_number")) }} ">
+              <img src="data:image/png;base64, {{ base64_encode(QrCode::format('png')->size(500)->generate("diken-"."$number->serial_number")) }} ">
           </div>
         </td>
        </tr>
