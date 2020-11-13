@@ -155,10 +155,8 @@ class ProductsController extends Controller
 
     public function listServiesProduct(SeachProductRequest $request){
 
-        $report_seach = Reports::whereRaw(
-            "(product_serial_number = ?)",
-            [$request->get('serial_number')]
-        );
+        $report_seach = Reports::where("product_serial_number",$request->get('serial_number'));
+        $report_seach->where("report_status", "!=", 'terminado');
 
         $report = $report_seach->get();
 
