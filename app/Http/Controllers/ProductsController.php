@@ -62,9 +62,9 @@ class ProductsController extends Controller
                 $data = collect( $request->all() )
                         ->put('branch_office_id', $request->current_user->branch_office_id);
 
-                       
+
         		$products = Products::create( $data->all() );
-                
+
         		return compact('products');
 
         	});
@@ -82,9 +82,9 @@ class ProductsController extends Controller
     public function show(Request $request, $product_id){
 
         $product = ModelHelper::findEntity(Products::class, $product_id);
-        
+
         return CustomResponse::success("Producto obetenido correctamente", ['product' => $product]);
-        
+
     }
 
     public function update(Request $request, $product_id){
@@ -154,7 +154,7 @@ class ProductsController extends Controller
     }
 
     public function listServiesProduct(SeachProductRequest $request){
-        
+
         $report_seach = Reports::whereRaw(
             "(product_serial_number = ?)",
             [$request->get('serial_number')]
@@ -169,8 +169,15 @@ class ProductsController extends Controller
     }
 
     public function domSerialNumber(Request $request){
-        
-        
+
+        $validator = Validator::make($request->all(), [
+            'serial_number' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            return CustomResponse::error('Error al validar', $validator->errors());
+        }
+
         $number = ProductUser::select(
             'products.code',
             'products.name',
@@ -195,12 +202,10 @@ class ProductsController extends Controller
 
         ->first();
 
-        //dd($number);
-        
         $pdf = \PDF::loadView('formats.serial_number', compact('number'));
-            
-        return $pdf->stream("$number->serial_number.pdf");
-        
+
+        return base64_encode($pdf->output());
+
 
     }
 

@@ -24,7 +24,7 @@ Route::get('download/file/plan_week', 'LettersController@planWeek')->name('downl
  * DELETE  /modelo/{modelo_id} -> delete
  */
 
-Route::group(['middleware' => ['jwt', 'cors']], function () {
+Route::group(['middleware' => ['jwt']], function () {
 
     Route::get('users','UserController@index')->name('users.index');
     Route::post('users','UserController@store')->name('users.store');
@@ -56,7 +56,6 @@ Route::group(['middleware' => ['jwt', 'cors']], function () {
     Route::put('services/{service_id}/messages/{message_id}','MessageController@update')
     ->name('service.message.update');
     Route::delete('services/{service_id}/messages/{message_id}','MessageController@destroy')->name('service.message.destroy');
-
 
     Route::post('files', 'FileController@upload')->name('files.upload');
     Route::delete('files/{file_id}', 'FileController@delete')->name('files.delete');
@@ -92,5 +91,5 @@ Route::group(['middleware' => ['jwt', 'cors']], function () {
 
     Route::get('product/search','ProductsController@listServiesProduct')->name('product.seach');
 
-    Route::get('product/serial/number','ProductsController@domSerialNumber')->name('product.serial');
+    Route::post('download/product/qr','ProductsController@domSerialNumber')->name('product.serial');
 });

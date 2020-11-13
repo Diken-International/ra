@@ -7,7 +7,6 @@
   <style type="text/css">
     h1{
       margin-top: 50px;
-      /* margin-left: 300px; */
     }
     .qr{
       margin-left: 99px;
@@ -20,7 +19,7 @@
   <body>
     <h1>
         <center>
-          {{ $number->name }}  
+          {{ $number->name }}
         </center>
     </h1>
     <br>
@@ -32,22 +31,21 @@
               <img src="data:image/png;base64, {{ base64_encode(QrCode::format('png')->size(500)->generate(" $number->serial_number")) }} ">
           </div>
         </td>
-       </tr> 
+       </tr>
       </tbody>
     </table>
     <br>
     <br>
-    <h2>Informacion del Equipo</h2>
-    <br>
-    <h3>Numero de serie: {{ $number->serial_number }}</h3>
-    <h3>Empresa o Compañia: {{ $number->company_name }}</h3>
-    <h3>Tipo de Equipo: (Prestado ò Comodato) 
+    <h2>INFORMACIÓN</h2>
+    <p><b>Numero de serie:</b> {{ $number->serial_number }}</p>
+    <p><b>Empresa o Compañia:</b> {{ $number->company_name }}</p>
+    <p><b>Tipo de Equipo:</b>
       @if ($number->product_type == 'own')
         Prestado
       @else
-        Comodato   
-      @endif 
-    </h3>
-    <p class="foot">Informaciòn generada por <a href=""><u>diken.mx</u></a></p>
+        Comodato
+      @endif
+    </p>
+    <p class="foot">Información generada por <b>diken.mx</b></p>
   </body>
 </html>
