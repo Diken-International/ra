@@ -57,7 +57,7 @@ Route::group(['middleware' => ['jwt']], function () {
     ->name('service.message.update');
     Route::delete('services/{service_id}/messages/{message_id}','MessageController@destroy')->name('service.message.destroy');
 
-    Route::post('files', 'FileController@upload')->name('files.upload');
+    Route::post('files', 'FileController@upload')->middleware('cors')->name('files.upload');
     Route::delete('files/{file_id}', 'FileController@delete')->name('files.delete');
 
     Route::get('repairs/products', 'RepairsController@products')->name('repair.products');
