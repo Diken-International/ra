@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ReportHelper;
+use App\Helpers\PaginatorHelper;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Helpers\CustomResponse;
 use App\Http\Requests\Service_Reposts\ServicesReportsIndexRequest;
+//use App\Http\Requests\reviewService\ReviewServiceRequest;
+
+use App\Models\Services;
 use App\Models\Reports;
 
 class ReportServiceController extends Controller
@@ -53,5 +59,23 @@ class ReportServiceController extends Controller
 
         $report = ReportHelper::ReportServices($query_set, $request, true);
         return CustomResponse::success('Reporte administrativo',$report);
+    }
+
+    public function reviewServices(Request $request, $services_id, $review_id){
+
+        $validator = Validator::make($request->all(), [
+            'services_id' => 'required',
+        ]);
+
+        $query_params = Services::select('services.id')
+        ->with('reportServices')
+        ->where([
+            'services.id' => $services_id
+        ])
+        ->first();
+    
+        //$data = PaginatorHelper::create($query_params, $request);
+
+        return CustomResponse::success("Data encontrada correctamente", $query_params);
     }
 }
