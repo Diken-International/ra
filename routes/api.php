@@ -93,4 +93,6 @@ Route::group(['middleware' => ['jwt', 'cors']], function () {
     Route::get('product/search','ProductsController@listServiesProduct')->name('product.seach');
 
     Route::get('product/serial/number','ProductsController@domSerialNumber')->name('product.serial');
+
+    Route::get('services/{service_id}/review/{review_id}','ReportServiceController@reviewServices')->name('services.review');
 });
