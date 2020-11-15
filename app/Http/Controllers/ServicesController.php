@@ -195,7 +195,7 @@ class ServicesController extends Controller
 
             $client = User::find($report->productUser->user_id);
             if(ServiceHelper::checkServiceComplete($report->service_id) && UserHelper::checkEmail($client)){
-                Mail::to($user->email)->send(new ReviewClient($service_id));
+                Mail::to($client->email)->send(new ReviewClient($service_id));
             }
 
             return CustomResponse::success(
