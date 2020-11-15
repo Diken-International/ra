@@ -91,8 +91,16 @@ class User extends Authenticatable implements JWTSubject
         return json_decode($value);
     }
 
+    public function getContactsAttribute($value){
+        return json_decode($value);
+    }
+
     public function setActivitiesAttribute($value){
         $this->attributes['activities'] =  json_encode($value);
+    }
+
+    public function setContactsAttribute($value){
+        $this->attributes['contacts'] =  json_encode($value);
     }
 
     public function getServicesAttribute(){
