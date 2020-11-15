@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AvailableHelper;
 use App\Helpers\ModelHelper;
+use App\Helpers\ServiceHelper;
 use App\Models\Products;
 use App\Models\ProductUser;
 use App\Models\ReportService;
@@ -13,6 +14,10 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
+use App\Mail\ReviewClient;
+use Illuminate\Support\Facades\Mail;
 
 use App\Helpers\CustomResponse;
 
@@ -192,6 +197,35 @@ class ServicesController extends Controller
         }catch(\Exception $exception){
             return CustomResponse::error("No fue posible actualizar el reporte", $exception->getMessage());
         }
+        
 
+    }
+
+    public function sendMail(Request $request, $service_id){
+        
+        $report = ModelHelper::findEntity(ReportService::class, $service_id);
+
+        $work   = ServiceHelper::checkServiceComplete($report->service_id);
+
+        
+        foreach($work as $i){
+            if ($i->status == 'terminado') {
+
+                $services = Services::select(
+                    'services.type',
+                    'services.activity',
+                    'report_services.status',
+                    'report_services.costs_repairs',
+                    'users.email'
+                )
+                ->join('report_services','report_services.service_id','=','services.id')
+                ->join('product_user','product_user.id','=','report_services.product_user_id')
+                ->join('users','users.id','=','product_user.user_id')
+                ->where('services.id','=',$i->service_id)
+                ->where('report_services.status','=','terminado')              
+                ->get();
+
+            }
+        }
     }
 }
