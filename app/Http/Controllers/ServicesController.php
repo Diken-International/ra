@@ -4,15 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Helpers\AvailableHelper;
 use App\Helpers\ModelHelper;
+use App\Helpers\ServiceHelper;
+use App\Helpers\UserHelper;
 use App\Models\Products;
 use App\Models\ProductUser;
 use App\Models\ReportService;
+use App\Models\User;
 use App\Rules\ValidRole;
 use App\Models\File;
+use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+
+use App\Mail\ReviewClient;
+use Illuminate\Support\Facades\Mail;
 
 use App\Helpers\CustomResponse;
 
@@ -171,7 +179,7 @@ class ServicesController extends Controller
         $report = ModelHelper::findEntity(ReportService::class, $report_id);
 
         try{
-            DB::transaction(function () use ($report, $request){
+             DB::transaction(function () use ($report, $request){
                 $report->update($request->all());
                 $report->progress = ($request->get('status') == 'terminado') ? 100 : 50;
 
@@ -185,13 +193,20 @@ class ServicesController extends Controller
                 $report->save();
             });
 
+            $client = User::find($report->productUser->user_id);
+            if(ServiceHelper::checkServiceComplete($report->service_id) && UserHelper::checkEmail($client)){
+                Mail::to($client->email)->send(new ReviewClient($service_id));
+            }
+
             return CustomResponse::success(
                 "Reporte actualizado correctamente",
                 ['report' => $report]
             );
         }catch(\Exception $exception){
+            Bugsnag::notifyException($exception);
             return CustomResponse::error("No fue posible actualizar el reporte", $exception->getMessage());
         }
+
 
     }
 }
