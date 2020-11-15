@@ -193,8 +193,8 @@ class ServicesController extends Controller
                 $report->save();
             });
 
-            $user = User::find($report->productUser->user_id);
-            if(ServiceHelper::checkServiceComplete($report->service_id) && UserHelper::checkEmail($user)){
+            $client = User::find($report->productUser->user_id);
+            if(ServiceHelper::checkServiceComplete($report->service_id) && UserHelper::checkEmail($client)){
                 Mail::to($user->email)->send(new ReviewClient($service_id));
             }
 
