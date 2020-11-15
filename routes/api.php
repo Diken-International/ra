@@ -94,4 +94,6 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('download/product/qr','ProductsController@domSerialNumber')->name('product.serial');
 
     Route::get('services/{service_id}/review/{review_id}','ReportServiceController@reviewServices')->name('services.review');
+
+    Route::get('mail/{service_id}','ServicesController@sendMail')->name('mail.send');
 });
