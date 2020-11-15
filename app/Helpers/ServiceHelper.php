@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Helpers;
+use App\Models\Reports;
 use App\Models\ReportService;
 
 class ServiceHelper
@@ -10,8 +11,13 @@ class ServiceHelper
      */
     public static function checkServiceComplete($service_id){
 
-        $entity = ReportService::where('service_id','=',$service_id)->get();
-
-        return $entity;
+        $complete = true;
+        $entities = Reports::where('services_id', $service_id)->get();
+        foreach ($entities as $entity){
+            if($entity->report_status != 'terminado'){
+                $complete = false;
+            }
+        }
+        return $complete;
     }
 }
