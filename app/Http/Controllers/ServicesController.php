@@ -10,8 +10,10 @@ use App\Models\Products;
 use App\Models\ProductUser;
 use App\Models\ReportService;
 use App\Models\User;
+use App\Models\CommentReview;
 use App\Rules\ValidRole;
 use App\Models\File;
+use App\Http\Requests\reviewService\ServiceReviewRequest;
 use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -208,5 +210,45 @@ class ServicesController extends Controller
         }
 
 
+    }
+
+    public function serviceSurvey(ServiceReviewRequest $request, $service_id){
+        
+        $token = $request->get('token_review');
+
+        $decrypted = \Crypt::decryptString($token);
+
+        $toke_string = substr($decrypted, 6, -2);
+
+        $report = ModelHelper::findEntity(Services::class, $service_id);
+
+        $cliente = User::find($report->client_id);
+
+        try{
+
+            if($cliente->email == $toke_string){
+
+                $comment = DB::transaction(function() use($request, $service_id){
+
+
+                    $comment_service = CommentReview::create([
+                        'token_review' => $request->get('token_review'),
+                        'star'         => $request->get('star'),
+                        'description'  => $request->get('description'),
+                        'check_revision' => $request->get('check_revision'),
+                        'service_id'   => $service_id
+                    ]);
+
+                    return $comment_service;
+                });
+
+            return CustomResponse::success("Reporte actualizado correctamente", $comment);
+
+            }
+
+        }catch(\Exception $exception){
+
+            return CustomResponse::error('La revisión no logró ser enviada', $exception->getMessage() );
+        }
     }
 }

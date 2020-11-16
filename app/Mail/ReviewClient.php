@@ -37,7 +37,7 @@ class ReviewClient extends Mailable
         $this->service = Services::find($this->service_id)->first();
         $this->service_reports = Reports::where('services_id', $this->service_id)->get();
         $this->client = User::find($this->service->client_id);
-        $this->url = env('APP_FRONTEND')."/review/".$this->service_id.'?token='.Crypt::encrypt($this->client->email);
+        $this->url = env('APP_FRONTEND')."/review/".$this->service_id.'/?token='.Crypt::encrypt($this->client->email);
 
     }
 
