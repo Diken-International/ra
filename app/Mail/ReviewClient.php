@@ -16,29 +16,22 @@ class ReviewClient extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $service_id;
     public $service;
     public $service_reports;
     public $client;
     public $url;
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct($service_id)
+
+
+    public function __construct($service)
     {
-        $this->service_id = $service_id;
+        $this->service = $service;
         $this->getAllReports();
     }
 
     public function getAllReports(){
-
-        $this->service = Services::find($this->service_id)->first();
-        $this->service_reports = Reports::where('services_id', $this->service_id)->get();
+        $this->service_reports = Reports::where('services_id', $this->service->id)->get();
         $this->client = User::find($this->service->client_id);
-        $this->url = env('APP_FRONTEND')."/review/".$this->service_id.'/?token='.Crypt::encrypt($this->client->email);
-
+        $this->url = env('APP_FRONTEND')."/review/".$this->service->id.'/?token='.Crypt::encrypt($this->client->email);
     }
 
     /**

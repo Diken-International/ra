@@ -16,6 +16,8 @@ Route::get('files/{path}', 'FileController@show')
 
 Route::get('download/file/plan_week', 'LettersController@planWeek')->name('download.plan.week');
 
+Route::post('review/{service_id}/','ServicesController@serviceSurvey')->name('services.serviceSurvey');
+
 /**
  * POST    /modelo/            -> store
  * GET     /modelo/            -> index
@@ -76,6 +78,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::post('download/file/reception', 'LettersController@reception')->name('download.reception');
     Route::post('download/file/warranty', 'LettersController@warranty')->name('download.warranty');
     Route::post('download/file/plan_week', 'LettersController@planWeek')->name('download.plan.week');
+    Route::post('download/product/qr','ProductsController@domSerialNumber')->name('product.serial');
 
     Route::get('todo','TodoController@index')->name('todo.index');
     Route::post('todo','TodoController@store')->name('todo.store');
@@ -88,12 +91,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::delete('projects/{product_id}','ProjectsController@destroy')->name('projects.destroy');
 
     Route::get('report/services','ReportServiceController@index')->name('report.index');
+    Route::get('product/search','ProductsController@listServiesProduct')->name('product.search');
 
-    Route::get('product/search','ProductsController@listServiesProduct')->name('product.seach');
-
-    Route::post('download/product/qr','ProductsController@domSerialNumber')->name('product.serial');
-
-    //Route::get('services/{service_id}/review/{review_id}','ReportServiceController@reviewServices')->name('services.review');
-
-    Route::post('review/{service_id}/','ServicesController@serviceSurvey')->name('services.serviceSurvey');
+    Route::get('review/{service_id}/','ReportServiceController@reviewServices')->name('services.review');
 });

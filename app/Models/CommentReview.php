@@ -10,7 +10,6 @@ class CommentReview extends Model
     protected $table = 'comment_reviews';
 
     protected $fillable = [
-    	'token_review',
     	'star',
     	'description',
     	'check_revision',

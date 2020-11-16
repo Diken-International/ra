@@ -2,30 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\AvailableHelper;
+use App\Events\ServiceComplete;
 use App\Helpers\ModelHelper;
 use App\Helpers\ServiceHelper;
 use App\Helpers\UserHelper;
-use App\Models\Products;
 use App\Models\ProductUser;
 use App\Models\ReportService;
 use App\Models\User;
 use App\Models\CommentReview;
 use App\Rules\ValidRole;
 use App\Models\File;
-use App\Http\Requests\reviewService\ServiceReviewRequest;
+use App\Http\Requests\ReviewService\ServiceReviewRequest;
 use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-
 use App\Mail\ReviewClient;
 use Illuminate\Support\Facades\Mail;
-
 use App\Helpers\CustomResponse;
-
 use App\Models\Services;
 use Illuminate\Validation\Rule;
 
@@ -197,7 +193,7 @@ class ServicesController extends Controller
 
             $client = User::find($report->productUser->user_id);
             if(ServiceHelper::checkServiceComplete($report->service_id) && UserHelper::checkEmail($client)){
-                Mail::to($client->email)->send(new ReviewClient($service_id));
+                event(new ServiceComplete($service_id, $client));
             }
 
             return CustomResponse::success(
@@ -213,42 +209,47 @@ class ServicesController extends Controller
     }
 
     public function serviceSurvey(ServiceReviewRequest $request, $service_id){
-        
-        $token = $request->get('token_review');
 
-        $decrypted = \Crypt::decryptString($token);
-
-        $toke_string = substr($decrypted, 6, -2);
-
-        $report = ModelHelper::findEntity(Services::class, $service_id);
-
-        $cliente = User::find($report->client_id);
+        $email = Crypt::decrypt($request->get('token_review'));
 
         try{
 
-            if($cliente->email == $toke_string){
+            $service = ModelHelper::findEntity(Services::class, $service_id);
 
-                $comment = DB::transaction(function() use($request, $service_id){
+            $client = User::find($service->client_id);
 
+            if($client->email == $email && $service->received_review == false){
 
-                    $comment_service = CommentReview::create([
-                        'token_review' => $request->get('token_review'),
+                $comment = DB::transaction(function() use($request, $service){
+
+                    $service->received_review = true;
+                    $service->save();
+
+                    return CommentReview::create([
                         'star'         => $request->get('star'),
                         'description'  => $request->get('description'),
-                        'check_revision' => $request->get('check_revision'),
-                        'service_id'   => $service_id
+                        'check_revision' => $request->get('check_revision', false),
+                        'service_id'   => $service->id
                     ]);
-
-                    return $comment_service;
                 });
 
-            return CustomResponse::success("Reporte actualizado correctamente", $comment);
+            return CustomResponse::success("Comentario enviado correctamente", $comment);
 
             }
 
-        }catch(\Exception $exception){
+            return CustomResponse::error("No es posible hacer comentarios a este servicio");
 
-            return CustomResponse::error('La revisión no logró ser enviada', $exception->getMessage() );
+
+        }catch(\Exception $exception){
+            Bugsnag::notifyException($exception);
+            return CustomResponse::error('El Comentario no logró ser almacenado', $exception->getMessage() );
         }
+    }
+
+    public function reviewServices(Request $request, $service_id){
+
+        $review = CommentReview::where('service_id', $service_id)->first();
+
+        return CustomResponse::success("Datos obtenidos", ['review' => $review]);
     }
 }

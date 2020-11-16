@@ -15,12 +15,12 @@ class CreateCommentReviewsTable extends Migration
     {
         Schema::create('comment_reviews', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('token_review', 100)->nullable(false);
             $table->integer('star');
-            $table->string('description', 100);
+            $table->text('description');
             $table->boolean('check_revision')->default(false);
             $table->integer('service_id');
             $table->timestamps();
+            $table->foreign('service_id')->references('id')->on('services');
         });
     }
 
