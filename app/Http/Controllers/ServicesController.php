@@ -19,8 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use App\Mail\ReviewClient;
-use Illuminate\Support\Facades\Mail;
 use App\Helpers\CustomResponse;
 use App\Models\Services;
 use Illuminate\Validation\Rule;
@@ -31,7 +29,8 @@ class ServicesController extends Controller
     public function index(Request $request){
 
         $services = Services::with(['client', 'technical'])
-            ->where('branch_office_id', $request->current_user->branch_office_id)->get();
+            ->where('branch_office_id', $request->current_user->branch_office_id)
+            ->orderBy('created_at', 'asc')->get();
 
         return CustomResponse::success('Servicio encontrado', [ 'services' => $services ]);
 

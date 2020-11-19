@@ -13,7 +13,8 @@ class Services extends Model
 
     protected $appends = [
         'model',
-        'reports'
+        'reports',
+        'comments'
     ];
 
     protected $fillable = [
@@ -28,6 +29,10 @@ class Services extends Model
 
     public function getReportsAttribute($value){
         return $this->reportServices()->get();
+    }
+
+    public function getCommentsAttribute($value){
+        return $this->comments()->get();
     }
 
     public function getCostsAttribute($value){
@@ -48,6 +53,10 @@ class Services extends Model
 
     public function reportServices(){
         return $this->hasMany(ReportService::class, 'service_id', 'id');
+    }
+
+    public function comments(){
+        return $this->hasMany(CommentReview::class, 'service_id', 'id');
     }
 
     public function client(){
