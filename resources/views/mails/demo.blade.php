@@ -1419,7 +1419,7 @@
                                             <tr>
                                                 <th>
                                                     <h1>Hola, {{ $client['name'] }}</h1>
-                                                    <p>Un servicio ha sido realizado nuestro equipo de servicio.</p>
+                                                    <p>Un servicio ha sido realizado nuestro por parte equipo de servicio.</p>
                                                     <p>Para ofrecerte un mejor servicio, te brindamos la siguiente información relacionada al servicio:</p>
                                                     <table class="spacer">
                                                         <tbody>

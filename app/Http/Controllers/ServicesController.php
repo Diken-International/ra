@@ -2,28 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\AvailableHelper;
+use App\Events\ServiceComplete;
 use App\Helpers\ModelHelper;
 use App\Helpers\ServiceHelper;
 use App\Helpers\UserHelper;
-use App\Models\Products;
 use App\Models\ProductUser;
 use App\Models\ReportService;
 use App\Models\User;
+use App\Models\CommentReview;
 use App\Rules\ValidRole;
 use App\Models\File;
+use App\Http\Requests\ReviewService\ServiceReviewRequest;
 use Bugsnag\BugsnagLaravel\Facades\Bugsnag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-
-use App\Mail\ReviewClient;
-use Illuminate\Support\Facades\Mail;
-
 use App\Helpers\CustomResponse;
-
 use App\Models\Services;
 use Illuminate\Validation\Rule;
 
@@ -33,7 +29,8 @@ class ServicesController extends Controller
     public function index(Request $request){
 
         $services = Services::with(['client', 'technical'])
-            ->where('branch_office_id', $request->current_user->branch_office_id)->get();
+            ->where('branch_office_id', $request->current_user->branch_office_id)
+            ->orderBy('created_at', 'asc')->get();
 
         return CustomResponse::success('Servicio encontrado', [ 'services' => $services ]);
 
@@ -195,7 +192,7 @@ class ServicesController extends Controller
 
             $client = User::find($report->productUser->user_id);
             if(ServiceHelper::checkServiceComplete($report->service_id) && UserHelper::checkEmail($client)){
-                Mail::to($client->email)->send(new ReviewClient($service_id));
+                event(new ServiceComplete($service_id, $client));
             }
 
             return CustomResponse::success(
@@ -208,5 +205,50 @@ class ServicesController extends Controller
         }
 
 
+    }
+
+    public function serviceSurvey(ServiceReviewRequest $request, $service_id){
+
+        $email = Crypt::decrypt($request->get('token_review'));
+
+        try{
+
+            $service = ModelHelper::findEntity(Services::class, $service_id);
+
+            $client = User::find($service->client_id);
+
+            if($client->email == $email && $service->received_review == false){
+
+                $comment = DB::transaction(function() use($request, $service){
+
+                    $service->received_review = true;
+                    $service->save();
+
+                    return CommentReview::create([
+                        'star'         => $request->get('star'),
+                        'description'  => $request->get('description'),
+                        'check_revision' => $request->get('check_revision', false),
+                        'service_id'   => $service->id
+                    ]);
+                });
+
+            return CustomResponse::success("Comentario enviado correctamente", $comment);
+
+            }
+
+            return CustomResponse::error("No es posible hacer comentarios a este servicio");
+
+
+        }catch(\Exception $exception){
+            Bugsnag::notifyException($exception);
+            return CustomResponse::error('El Comentario no logró ser almacenado', $exception->getMessage() );
+        }
+    }
+
+    public function reviewServices(Request $request, $service_id){
+
+        $review = CommentReview::where('service_id', $service_id)->first();
+
+        return CustomResponse::success("Datos obtenidos", ['review' => $review]);
     }
 }
