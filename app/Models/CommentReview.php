@@ -16,4 +16,8 @@ class CommentReview extends Model
     	'service_id',
     ];
 
+    public function service(){
+        return $this->belongsTo(Services::class)->select(['id', 'client_id', 'technical_id'])->with(['client', 'technical']);
+    }
+
 }

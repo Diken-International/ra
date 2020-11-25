@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\ServiceComplete;
 use App\Helpers\ModelHelper;
+use App\Helpers\PaginatorHelper;
 use App\Helpers\ServiceHelper;
 use App\Helpers\UserHelper;
 use App\Models\ProductUser;
@@ -28,11 +29,55 @@ class ServicesController extends Controller
 
     public function index(Request $request){
 
-        $services = Services::with(['client', 'technical'])
+        $query = Services::with(['client', 'technical'])
             ->where('branch_office_id', $request->current_user->branch_office_id)
-            ->orderBy('created_at', 'asc')->get();
+            ->orderBy('created_at', 'asc');
 
-        return CustomResponse::success('Servicio encontrado', [ 'services' => $services ]);
+        $services = $query->get();
+
+        $data = PaginatorHelper::create($services, $request);
+
+        return CustomResponse::success('Servicio encontrado', $data);
+
+    }
+
+    public function reviews(Request $request){
+
+        $query = DB::table('services')
+            ->select([
+                'comment_reviews.*',
+                'client.business_name as client_business',
+                'technical.name as technical_name'
+            ])
+            ->join(
+                'comment_reviews',
+                'services.id',
+                'comment_reviews.service_id')->join(
+                'users as client',
+                'services.client_id',
+                'client.id'
+            )->join('users as technical',
+                'services.technical_id',
+                'technical.id')
+            ->where([
+                'services.branch_office_id' => $request->current_user->branch_office_id,
+                'comment_reviews.check_revision' => true
+            ]);
+
+
+        if ($request->current_user->role == 'admin'){
+            $services = $query->get();
+        }
+
+        if($request->current_user->role == 'tecnico'){
+
+            $query = $query->where('services.technical_id', $request->current_user->id);
+            $services = $query->get();
+        }
+
+        $data = PaginatorHelper::create($services, $request);
+
+        return CustomResponse::success('Servicio encontrado', $data);
 
     }
 
@@ -45,7 +90,8 @@ class ServicesController extends Controller
             'activity'          => ['required', Rule::in(['preventive',  'corrective'])],
             'kms'               => ['numeric'],
             'tentative_date'    => ['required', 'date'],
-            'product_user_ids'  => 'required|array'
+            'product_user_ids'  => 'required|array',
+            'performance'       => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -62,7 +108,8 @@ class ServicesController extends Controller
                     'type'              => $request->get('type'),
                     'kms'               => $request->get('kms'),
                     'activity'          => $request->get('activity'),
-                    'branch_office_id'  => $request->current_user->branch_office_id
+                    'branch_office_id'  => $request->current_user->branch_office_id,
+                    'performance'       => $request->get('performance')
                  ]);
 
                 foreach ($request->get('product_user_ids') as $product_id){
@@ -114,7 +161,8 @@ class ServicesController extends Controller
             'tentative_date'    => ['date'],
             'type'              => ['required', Rule::in(['face-to-face',  'remote'])],
             'activity'          => ['required', Rule::in(['preventive',  'corrective'])],
-            'kms'               => ['numeric']
+            'kms'               => ['numeric'],
+            'performance'       => ['required', 'numeric']
         ]);
 
         if ($validator->fails()) {
@@ -132,6 +180,7 @@ class ServicesController extends Controller
                     'kms' => $request->get('kms', $service->kms),
                     'tentative_date' => $request->get('tentative_date', $service->tentative_date),
                     'activity' => $request->get('activity', $service->activity),
+                    'performance' => $request->get('performance', $service->performance)
                 ]);
 
                 return $service;
@@ -250,5 +299,14 @@ class ServicesController extends Controller
         $review = CommentReview::where('service_id', $service_id)->first();
 
         return CustomResponse::success("Datos obtenidos", ['review' => $review]);
+    }
+
+    public function reviewsUpdate(Request $request, $review_id){
+
+        $entity = ModelHelper::findEntity(CommentReview::class, $review_id);
+        $entity->update($request->all());
+
+        return CustomResponse::success("Estatus de comentario actualizado correctamente", []);
+
     }
 }

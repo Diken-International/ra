@@ -24,7 +24,8 @@ class Services extends Model
         'tentative_date',
         'type',
         'kms',
-        'activity'
+        'activity',
+        'performance'
     ];
 
     public function getReportsAttribute($value){

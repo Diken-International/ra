@@ -63,6 +63,14 @@ class LettersController extends Controller
             return $todo;
         })->groupBy('date');
 
+        $sum_kms = $todo_week->reduce(function ($sum, $todo){
+            return $sum + $todo->kms;
+        });
+
+        $sum_performance = $todo_week->reduce(function ($sum, $todo){
+            return $sum + $todo->performance;
+        });
+
         $start_day = $request->get('start_week', '2020-08-19');
         $end_day = $request->get('end_week', '2020-08-27');
 
@@ -74,7 +82,9 @@ class LettersController extends Controller
             'range' => [
                 'start' => strftime("%A, %d %B %G", strtotime(Carbon::parse($start_day))),
                 'end'   => strftime("%A, %d %B %G", strtotime(Carbon::parse($end_day)))
-            ]
+            ],
+            'sum_kms' => $sum_kms,
+            'sum_performance' => $sum_performance
         ]);
 
         $pdf->setPaper('A4', 'landscape');

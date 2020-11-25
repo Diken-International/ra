@@ -46,6 +46,8 @@ Route::group(['middleware' => ['jwt']], function () {
 
     Route::get('services','ServicesController@index')->name('services.index');
     Route::post('services','ServicesController@store')->name('services.store');
+    Route::get('services/reviews','ServicesController@reviews')->name('services.reviews');
+    Route::patch('services/reviews/{review_id}','ServicesController@reviewsUpdate')->name('services.reviews.update');
     Route::get('services/{service_id}','ServicesController@show')->name('services.show');
     Route::patch('services/{service_id}','ServicesController@update')->name('services.update');
     Route::delete('services/{service_id}','ServicesController@destroy')->name('services.destroy');
@@ -69,6 +71,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::get('repairs/{repair_id}','RepairsController@show')->name('repair.show');
     Route::put('repairs/{repair_id}','RepairsController@update')->name('repair.update');
 
+    Route::get('products/next_service','ProductsController@nextService')->name('products.next.service');
     Route::get('products','ProductsController@index')->name('products.index');
     Route::post('products','ProductsController@store')->name('products.store');
     Route::get('products/{product_id}','ProductsController@show')->name('products.show');

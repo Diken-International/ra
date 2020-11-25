@@ -15,22 +15,6 @@
         return $client_name;
     }
 
-    function activityTrad($activity){
-        $activityTrad = [
-            'presentation-project' => 'Presentación de proyecto',
-            'presentation-system' => 'Presentación de sistema',
-            'develop-project' => 'Desarrollo de proyecto',
-            'installation-of-system' => 'Instalación de sistema',
-            'calibration-of-equipment' => 'Calibración de equipo',
-            'start-system-ccs' => 'Arranque de sistema CCS',
-            'delivery-system' => 'Entrega de sistema a cliente',
-            'other' => 'Otra',
-            'preventive' => 'Mantenimiento preventivo',
-            'corrective' => 'Mantenimiento correctivo'
-        ];
-        return $activityTrad[$activity];
-    }
-
 
 ?>
 
@@ -45,6 +29,7 @@
             h2{
                 margin-top: 0px;
             }
+            .page_break { page-break-before: always; }
         </style>
     </head>
     <body class="system-sans-serif">
@@ -64,6 +49,7 @@
                             <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Trabajo</th>
                             <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Cliente</th>
                             <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Kms por recorrer</th>
+                            <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Rendimiento</th>
                             <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Actividad</th>
                         </tr>
                         </thead>
@@ -76,12 +62,12 @@
                                 <td class="pv3 pr3 bb b--black-20">{{ typeActivity($activity->type_activity) }}</td>
                                 <td class="pv3 pr3 bb b--black-20">{{ hasClient($activity->client_id, $activity->client_name ) }}</td>
                                 <td class="pv3 pr3 bb b--black-20">{{ $activity->kms }}</td>
-                                <td class="pv3 pr3 bb b--black-20">{{ activityTrad($activity->activity) }}</td>
+                                <td class="pv3 pr3 bb b--black-20">{{ $activity->performance }}</td>
+                                <td class="pv3 pr3 bb b--black-20">{{ type_activity($activity->activity) }}</td>
                             </tr>
                             <tr>
-                                <td class="pv3 pr3 b--light-purple" colspan="5">
-                                    Descripción de actividad: <br>
-                                    <b>{{$activity->description}}</b>
+                                <td class="pv3 pr3 b--light-purple" colspan="6">
+                                    Descripción de actividad: <b>{{$activity->description}}</b>
                                 </td>
                             </tr>
                         @endforeach
@@ -91,6 +77,36 @@
                 @endforeach
 
             </div>
+        </div>
+        <div class="page_break"></div>
+        <div class="ph4">
+            <div class="overflow-auto">
+                <h3 class="blue">Litros de Gasolina</h3>
+                <table class="f6 mw8 center system-sans-serif" cellspacing="0">
+                    <thead>
+                    <tr>
+                        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Fecha</th>
+                        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Kms por recorrer</th>
+                        <th class="fw6 bb b--black-20 tl pb3 pr3 bg-white">Rendimiento</th>
+                    </tr>
+                    </thead>
+                    <tbody class="lh-copy">
+                    @foreach($activities_week as $key => $day)
+                        @foreach($day as $activity)
+                            <tr class="bg-near-white">
+                                <td class="pv3 pr3 bb b--black-20">{{ $activity->date_activity }}</td>
+                                <td class="pv3 pr3 bb b--black-20">{{ $activity->kms }}</td>
+                                <td class="pv3 pr3 bb b--black-20">{{ $activity->performance }}</td>
+                            </tr>
+                        @endforeach
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="ph4">
+            <h4>Total de gasolina: <b>{{ round($sum_kms / $sum_performance, 3, PHP_ROUND_HALF_UP) }} Litros</b></h4>
+            <p>El valor en litros de gasolina se encuentra redondeado</p>
         </div>
     </body>
 </html>

@@ -14,6 +14,7 @@ class Todo extends Model
         'kms',
         'technical_id',
         'client_id',
-        'status'
+        'status',
+        'performance'
     ];
 }

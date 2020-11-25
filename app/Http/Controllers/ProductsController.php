@@ -33,6 +33,27 @@ class ProductsController extends Controller
 
     }
 
+    public function nextService(Request $request){
+
+        $query = DB::table('product_user')
+            ->select([
+                'client.id as client_id',
+                DB::raw('CONCAT(client.business_name, \' - \' ,client.company_name) as client_business_name'),
+                'product_user.next_service as product_next_service',
+                'p.name as product_name'
+            ])
+            ->join('products as p', 'product_user.product_id', 'p.id')
+            ->join('users as client', 'product_user.user_id', 'client.id')
+            ->where('p.branch_office_id', $request->current_user->branch_office_id)
+            ->where('product_user.next_service', '<=', DB::raw('current_date + 7'))
+            ->orderBy('product_user.next_service', 'asc')->get();
+
+        $data = PaginatorHelper::create($query, $request);
+
+        return CustomResponse::success("Productos con proximos servicios", $data);
+
+    }
+
     public function store(Request $request){
 
     	$validator = Validator::make($request->all(), [

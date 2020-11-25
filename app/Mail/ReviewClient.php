@@ -11,6 +11,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 
 class ReviewClient extends Mailable
 {
@@ -29,8 +30,21 @@ class ReviewClient extends Mailable
     }
 
     public function getAllReports(){
-        $this->service_reports = Reports::where('services_id', $this->service->id)->get();
         $this->client = User::find($this->service->client_id);
+        $this->service_reports = DB::table('services')->select([
+            'p.name as product_name',
+            'services.id as service_id',
+            'services.activity as service_activity',
+            'services.type as service_type',
+            'services.created_at as service_start',
+            'pu.period_service as product_period_service'])
+            ->join('report_services as rs', 'services.id', 'rs.service_id')
+            ->join('product_user as pu', 'rs.product_user_id', 'pu.id')
+            ->join('products as p', 'pu.product_id', 'p.id')
+            ->where([
+                'p.branch_office_id' => $this->client->branch_office_id,
+                'services.id' => $this->service->id
+            ])->get();
         $this->url = env('APP_FRONTEND')."/review/".$this->service->id.'/?token='.Crypt::encrypt($this->client->email);
     }
 
@@ -41,6 +55,7 @@ class ReviewClient extends Mailable
      */
     public function build()
     {
-        return $this->view('mails.demo')->subject("diken - Información sobre tu servicio");
+        return $this->markdown('emails.notify.complete')
+            ->subject("diken - Información sobre tu servicio");
     }
 }
