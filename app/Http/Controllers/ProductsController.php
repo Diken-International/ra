@@ -65,9 +65,7 @@ class ProductsController extends Controller
             'category_id' => 'required',
             'specifications_operation' => 'required',
             'specifications_desing' => 'required',
-            'benefits' => 'required',
-            'cost' => 'required',
-            'price' => 'required',
+            'benefits' => 'required'
 
 
         ]);
