@@ -76,6 +76,11 @@ class LettersController extends Controller
 
         $technical = User::where('id', $request->current_user->id)->first();
 
+        $div = 1;
+        if ($todo_week->count() >= 1){
+            $div = $todo_week->count();
+        }
+
         $pdf = PDF::loadView('formats.activities_week', [
             'activities_week' => $activities_week,
             'technical_name' => $technical->name.' '.$technical->last_name,
@@ -84,7 +89,7 @@ class LettersController extends Controller
                 'end'   => strftime("%A, %d %B %G", strtotime(Carbon::parse($end_day)))
             ],
             'sum_kms' => $sum_kms,
-            'sum_performance' => $sum_performance
+            'sum_performance' => ($sum_performance / $div)
         ]);
 
         $pdf->setPaper('A4', 'landscape');
