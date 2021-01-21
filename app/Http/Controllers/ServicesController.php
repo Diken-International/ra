@@ -31,9 +31,17 @@ class ServicesController extends Controller
 
         $query = Services::with(['client', 'technical'])
             ->where('branch_office_id', $request->current_user->branch_office_id)
-            ->orderBy('created_at', 'asc');
+            ->orderBy('created_at', 'desc');
 
-        $services = $query->get();
+        if ($request->current_user->role == 'admin'){
+            $services = $query->get();
+        }
+
+        if($request->current_user->role == 'tecnico'){
+
+            $query = $query->where('services.technical_id', $request->current_user->id);
+            $services = $query->get();
+        }
 
         $data = PaginatorHelper::create($services, $request);
 
