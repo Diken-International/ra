@@ -15,6 +15,7 @@ Route::get('files/{path}', 'FileController@show')
     ->name('files.show');
 
 Route::get('download/file/plan_week', 'LettersController@planWeek')->name('download.plan.week');
+Route::get('download/report/{service_id}', 'LettersController@reportService')->name('download.report');
 
 Route::post('review/{service_id}/','ServicesController@serviceSurvey')->name('services.serviceSurvey');
 

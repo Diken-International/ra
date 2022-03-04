@@ -6,6 +6,8 @@ use App\Helpers\ModelHelper;
 use App\Http\Requests\Downloads\ReceptionRequest;
 use App\Models\Activities;
 use App\Models\ProductUser;
+use App\Models\ReportService;
+use App\Models\Services;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
@@ -97,6 +99,16 @@ class LettersController extends Controller
         return base64_encode($pdf->output());
 
 
+    }
+
+    public function reportService(Request $request, $service_id){
+        $service = Services::with(['client', 'technical', 'reportServices'])->where(['id' =>  $service_id])->first();
+
+        $pdf = PDF::loadView('formats.reports', [
+            'service' => $service
+        ]);
+
+        return base64_encode($pdf->output());
     }
 
 }
