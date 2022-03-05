@@ -108,7 +108,7 @@ class LettersController extends Controller
             'service' => $service
         ]);
 
-        return $pdf->download('servicio.pdf');
+        return base64_encode($pdf->output());
     }
 
 }
