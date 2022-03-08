@@ -18,17 +18,21 @@
     <div class="center mw5 mw7 hidden ba mv4">
       <h1 class="f4 bg-near-black  mv0 pv2 ph3 bg-blue white tc">Reporte de servicio</h1>
       <div class="pa3 bt">
-        <div class="dib w-20">
-            <img style="width: 120px" src="{{ url('images/diken.png') }}" alt="">
-        </div>
-        <div class="dib w-70">
-            <p class="f6 f5-ns lh-copy mv0 tj">
-                El reporte detalla el servicio proporcionado por el tecnico <b>{{ $service->technical->name }} {{ $service->technical->last_name }}</b> en sus instalaciones.
-            </p>
-            <div class="tr space-text">
-                <p><span>Fecha: {{ \Carbon\Carbon::now()->format('d/m/y') }}</span> | <span>Número de servicio: </span> {{ $service->id }}</p>
-            </div>
-        </div>
+        <div class="dib w-20 tc">
+            <img style="width: 120px" src="{{ url('images/logo1.png') }}" alt="">
+        </div><div class="dib w-60 tc pv3">
+            <h2>Reporte</h2>
+        </div><div class="dib w-20 tc">
+              <img style="width: 120px" src="{{ url('images/logo2.png') }}" alt="">
+          </div>
+      </div>
+      <div class="ph3 pv2 tc">
+          <p class="f6 f5-ns lh-copy mv0">
+              El reporte detalla el servicio proporcionado por el tecnico <b>{{ $service->technical->name }} {{ $service->technical->last_name }}</b> en sus instalaciones.
+          </p>
+          <div class="space-text">
+              <p><span>Fecha: {{ \Carbon\Carbon::now()->format('d/m/y') }}</span> | <span>Número de servicio: </span> {{ $service->id }}</p>
+          </div>
       </div>
       <div class="ph3 pv2 ">
           <div class="dib w-30">

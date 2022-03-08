@@ -264,6 +264,19 @@ class ServicesController extends Controller
 
     }
 
+    public function reSendEmail(Request $request, $service_id){
+        $service = ModelHelper::findEntity(Services::class, $service_id);
+        try{
+            $client = User::find($service->client_id);
+            event(new ServiceComplete($service_id, $client));
+            return CustomResponse::success("Correo enviado correctamente");
+        }catch(\Exception $exception){
+            Bugsnag::notifyException($exception);
+            return CustomResponse::error("No se puede enviar reporte", $exception->getMessage());
+        }
+        return CustomResponse::error("No se puede enviar reporte");
+    }
+
     public function serviceSurvey(ServiceReviewRequest $request, $service_id){
 
         $email = Crypt::decrypt($request->get('token_review'));

@@ -21,6 +21,7 @@ class ReviewClient extends Mailable
     public $service_reports;
     public $client;
     public $url;
+    public $url_progress;
 
 
     public function __construct($service)
@@ -46,6 +47,7 @@ class ReviewClient extends Mailable
                 'services.id' => $this->service->id
             ])->get();
         $this->url = env('APP_FRONTEND')."/review/".$this->service->id.'/?token='.Crypt::encrypt($this->client->email);
+        $this->url_progress = route('download.report',['service_id' => $this->service->id]).'?download=1';
     }
 
     /**

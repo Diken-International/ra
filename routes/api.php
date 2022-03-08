@@ -52,6 +52,7 @@ Route::group(['middleware' => ['jwt']], function () {
     Route::get('services/{service_id}','ServicesController@show')->name('services.show');
     Route::patch('services/{service_id}','ServicesController@update')->name('services.update');
     Route::delete('services/{service_id}','ServicesController@destroy')->name('services.destroy');
+    Route::post('services/{service_id}/email','ServicesController@reSendEmail')->name('services.resend');
 
     Route::get('services/{service_id}/reports/{report_id}','ServicesController@reportShow')->name('services.report.show');
     Route::patch('services/{service_id}/reports/{report_id}','ServicesController@reportUpdate')->name('services.report.update');

@@ -104,6 +104,9 @@ class LettersController extends Controller
     public function reportService(Request $request, $service_id){
         $service = Services::with(['client', 'technical', 'reportServices'])->where(['id' =>  $service_id])->first();
 
+        // debug view
+        // return view('formats.reports',['service' => $service]);
+
         $pdf = PDF::loadView('formats.reports', [
             'service' => $service
         ]);

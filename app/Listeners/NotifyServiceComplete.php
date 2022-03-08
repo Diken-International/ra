@@ -22,9 +22,15 @@ class NotifyServiceComplete implements ShouldQueue
     {
         $this->service = Services::find($event->service_id);
         if(!$this->service->send_review_email){
+            foreach ($event->client->contacts as $contact){
+                // Send email to contacts
+                if (filter_var($contact->email, FILTER_VALIDATE_EMAIL)){
+                    Mail::to($contact->email)->send(new ReviewClient($this->service));
+                }
+            }
             Mail::to($event->client->email)->send(new ReviewClient($this->service));
             $this->service->send_review_email = true;
-            $this->service->save();
+            // $this->service->save();
         }
     }
 
