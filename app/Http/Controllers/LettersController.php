@@ -108,6 +108,9 @@ class LettersController extends Controller
             'service' => $service
         ]);
 
+        if ($request->get('download') == 1){
+            return $pdf->download('report.pdf');
+        }
         return base64_encode($pdf->output());
     }
 
