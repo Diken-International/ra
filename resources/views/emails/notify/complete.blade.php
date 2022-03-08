@@ -6,7 +6,7 @@
 # Hola.
 ## Tu mantenimiento ha sido terminado.
 
-Un mantenimiento ha sido realizado por nuestro equipo tecnico CSS en las instalaciones de {{ $client['company_name'] }}.
+Un mantenimiento ha sido realizado por nuestro equipo tecnico Cleaning Control  System en las instalaciones de {{ $client['company_name'] }}.
 
 Consulta los detalles del mantenimiento realizado por nuestro equipo.
 @component('mail::button', ['url' => $url_progress])
